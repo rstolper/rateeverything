@@ -1,0 +1,4 @@
+rateeverything
+==============
+
+Rate Everything application
