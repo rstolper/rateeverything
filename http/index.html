@@ -39,6 +39,13 @@
                     <li class="active"><a href="index.html">Home</a></li>
                     <li><a href="about.html">About</a></li>
                     </ul>
+                    
+                    <form class="navbar-form navbar-right" role="form" ng-submit="login()">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Username" ng-model="userName" ng-disabled="isLoggedIn()" autofocus  focus-on="loggedOut" /> 
+                        </div>
+                        <button type="submit" class="btn btn-primary" >{{isLoggedIn() ? "Logout" : "Login"}}</button>
+                    </form>
                 </div><!--/.nav-collapse -->
             </div>
         </div>
@@ -46,14 +53,14 @@
         <div class="container">
             
             <div class="starter-template">
+<!--
                 <div>
                     <form class="form-inline" role="form" name="loginForm" ng-submit="login()" />
                         <input type="text" class="form-control" placeholder="Username" ng-model="userName" ng-disabled="isLoggedIn()" autofocus  focus-on="loggedOut" /> 
                         <button type="submit" class="btn btn-primary" >{{isLoggedIn() ? "Logout" : "Login"}}</button>
                     </form>
                 </div>
-                
-                <br>
+-->
                 
                 <div ng-show="isLoggedIn()">
                 
