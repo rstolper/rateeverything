@@ -27,6 +27,8 @@
         $scope.activeSearchString = "";
         $scope.loggedInUser = "";
         
+        $scope.navBar = {};
+        
         $scope.hasAtLeastOneItem = function () {
             return Object.keys($scope.allItems).length > 0;
         };

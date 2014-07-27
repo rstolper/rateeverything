@@ -40,12 +40,17 @@
                     <li><a href="about.html">About</a></li>
                     </ul>
                     
-                    <form class="navbar-form navbar-right" role="form" ng-submit="login()">
+                    
+
+                    <form class="navbar-form navbar-right" role="form" ng-submit="login()" ng-show="isLoggedIn()">
+<!--
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Username" ng-model="userName" ng-disabled="isLoggedIn()" autofocus  focus-on="loggedOut" /> 
                         </div>
+-->
                         <button type="submit" class="btn btn-primary" >{{isLoggedIn() ? "Logout" : "Login"}}</button>
                     </form>
+
                 </div><!--/.nav-collapse -->
             </div>
         </div>
@@ -53,18 +58,22 @@
         <div class="container">
             
             <div class="starter-template">
-<!--
+
                 <div>
+                    
+                </div>
+
+                <div ng-hide="isLoggedIn()">
+                    
                     <form class="form-inline" role="form" name="loginForm" ng-submit="login()" />
                         <input type="text" class="form-control" placeholder="Username" ng-model="userName" ng-disabled="isLoggedIn()" autofocus  focus-on="loggedOut" /> 
                         <button type="submit" class="btn btn-primary" >{{isLoggedIn() ? "Logout" : "Login"}}</button>
                     </form>
                 </div>
--->
-                
                 <div ng-show="isLoggedIn()">
                 
                     <div>
+<!--
                         <form class="form-inline" role="form" name="addItemForm" ng-submit="addNewItem()">
                             <input type="text" class="form-control" placeholder="Category" ng-model="newItem.category" ng-keyup="search('additem')" /> 
                             <input type="text" class="form-control" placeholder="Item Name" ng-model="newItem.itemName" ng-keyup="search('additem')" focus-on="addItemToCategoryRequest" /> 
@@ -78,9 +87,10 @@
                         </form>
 
                         <br>
+-->
 
-                        <form class="form-inline" role="form" name="searchItemsForm" />
-                            <input type="text" class="form-control" placeholder="Search..." ng-model="searchString" ng-keyup="search('searchbar')" focus-on="focusSearch" />
+                        <form class="form" role="form" name="searchItemsForm" />
+                            <input type="text" class="form-control" placeholder="Search anything..." ng-model="searchString" ng-keyup="search('searchbar')" focus-on="focusSearch" />
                         </form>
                     </div>
 
@@ -89,14 +99,15 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title" ng-switch="isSearchActive">
+<!--                                TODO: Move clear into search bar as X, keep add item on search results screen-->
                                 <div ng-switch-when="true">Search Results [<a href="#" ng-click="clearSearchString()">clear</a>]</div>
-                                <div ng-switch-when="false">All Items</div>
+                                <div ng-switch-when="false">All Items [<a href="#" data-toggle="modal" data-target="#addItemModal">+add item</a>]</div>
                             </h4>
                         </div>
 
                         <div class="panel-body">
                             <h4 ng-repeat-start="(category, items) in itemsByCategory">
-                                {{category}} [<a href="#" ng-click="addItemToCategoryRequest(category)">+add</a>]
+                                {{category}} [<a href="#" ng-click="addItemToCategoryRequest(category)" data-toggle="modal" data-target="#addItemModal">+add</a>]
                             </h4>
                             <ul style="padding:0px 20px" ng-repeat-end>
                                 <li ng-repeat="item in items track by item.esItemId">
@@ -106,6 +117,45 @@
                             </ul>
                         </div>
                     </div>
+                
+                    <div class="modal fade" id="addItemModal" >
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title">Add Items</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form role="form" name="addItemForm" ng-submit="addNewItem()">
+                                        <input type="text" class="form-control" placeholder="Category" ng-model="newItem.category" /> 
+                                        <input type="text" class="form-control" placeholder="Item Name" ng-model="newItem.itemName" focus-on="addItemToCategoryRequest" /> 
+                                        <select class="form-control" ng-model="newItem.rating">
+                                            <option value="">Rating...</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                            <option value="Maybe">Maybe</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-success">Add New Item</button>
+                                    </form>
+                                    
+                                    <div class="panel-body">
+                                        <h4 ng-repeat-start="(category, items) in newItemSearchByCategory">
+                                            {{category}} [<a href="#" ng-click="addItemToCategoryRequest(category)">+add</a>]
+                                        </h4>
+                                        <ul style="padding:0px 20px" ng-repeat-end>
+                                            <li ng-repeat="item in items track by item.esItemId">
+                                                {{item.itemName}}: {{item.rating}}
+                                                <a href="#" ng-click="deleteItem(item)">delete</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Done</button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
 
                 </div>
             </div>
