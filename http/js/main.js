@@ -18,13 +18,16 @@
         $scope.newItem = {};
         $scope.allItems = {}; // static maintainer of all items the user has
         $scope.itemsByCategory = {};
+        $scope.newItemSearchByCategory = {};
         // TODO: custom watch expression on allItems to refresh this list via refreshActiveSearch()
         $scope.searchResultItems = {}; // the active listing of items to display
         $scope.userName = "";
         $scope.searchString = "";
         
         $scope.isSearchActive = false;
-        $scope.activeSearchString = "";
+        $scope.isItemAddOpen = false;
+        //$scope.activeSearchString = "";
+        $scope.addItemSearchString = "";
         $scope.loggedInUser = "";
         
         $scope.navBar = {};
@@ -51,6 +54,7 @@
                 $scope.newItem = {};
                 $scope.searchString = "";
                 $scope.isSearchActive = false;
+                $scope.$apply();
                 $scope.$broadcast('loggedOut');
             }
             else {
@@ -82,11 +86,12 @@
             $scope.newItem.userName = $scope.loggedInUser
             $scope.dao.insertItem($scope.newItem, function (item) {
                 newItemHandler(item);
-                //refreshActiveSearch();
                 $scope.newItem.itemName = "";
                 $scope.newItem.rating = "";
-                $scope.search('additem')
-                //refreshActiveSearch();
+                //$scope.search('searchbar')
+                refreshActiveSearch();
+                // TODO: be more intelligent about knowing if addItem modal is open
+                $scope.searchWhileAdding();
                 $scope.$apply();
                 $scope.$broadcast('addItemToCategoryRequest');
             });
@@ -96,6 +101,7 @@
             $scope.newItem.category = category;
             $scope.newItem.itemName = "";
             $scope.newItem.rating = "";
+            $scope.searchWhileAdding();
             $scope.$broadcast('addItemToCategoryRequest');
         }
         
@@ -104,30 +110,48 @@
             $scope.dao.deleteItem(itemId, function () {
                 delete $scope.allItems[itemId];
                 removeItemFromLunr({esItemId: itemId});
-                $scope.newItem = item; // for ease of readding
+                //$scope.newItem = item; // for ease of readding
                 refreshActiveSearch();
+                // TODO: be more intelligent about knowing if addItem modal is open
+                $scope.searchWhileAdding();
                 $scope.$apply();
             });
         };
         
-        $scope.search = function (searchBy) {
-            var searchString = "";
-            if (searchBy == 'searchbar')
-                searchString = $scope.searchString;
-            else if (searchBy == 'additem')
+        $scope.search = function () {
+           // var searchString = "";
+            //if (searchBy == 'searchbar')
+            //    searchString = $scope.searchString;
+            //else if (searchBy == 'additem')
                 //searchString = ($scope.newItem.category || '') + " " + ($scope.newItem.itemName || '');
-                searchString = ($scope.newItem.category || '');
+            //    searchString = ($scope.newItem.category || '');
             
-            if (searchString && searchString.trim().length > 0)
+            if ($scope.searchString && $scope.searchString.trim().length > 0)
             {
                 $scope.isSearchActive = true;
-                $scope.activeSearchString = searchString;
+                //$scope.activeSearchString = searchString;
             }
             else
             {
                 $scope.isSearchActive = false;
             }
             refreshActiveSearch()
+        }
+        
+        $scope.searchWhileAdding = function () {
+            $scope.addItemSearchString = ($scope.newItem.category || '') + " " + ($scope.newItem.itemName || '');
+            if ($scope.addItemSearchString && $scope.addItemSearchString.trim().length > 0)
+            {
+                var results = {};
+                findItems($scope.addItemSearchString).forEach(function(item) {
+                    results[item.esItemId] = item;
+                });
+                $scope.newItemSearchByCategory = _.groupBy(results, 'category');
+            }
+            else
+            {
+                $scope.newItemSearchByCategory = {};
+            }
         }
         
         $scope.clearSearchString = function()
@@ -148,7 +172,7 @@
             if ($scope.isSearchActive)
             {
                 $scope.searchResultItems = {};
-                findItems($scope.activeSearchString).forEach(function(item) {
+                findItems($scope.searchString).forEach(function(item) {
                     $scope.searchResultItems[item.esItemId] = item;
                 });
             }
@@ -225,14 +249,6 @@
                 }
                 resolve(receivedItems);
             }).then(itemsReceivedCallback);
-            
-//            var receivedItems = [];
-//            for (var key in this.items) {
-//                receivedItems.push(this.items[key]);
-//            }
-//            itemsReceivedCallback(receivedItems);
-            
-            //return promise;
         },
         deleteItem: function (esItemId, itemDeletedCallback) {
             delete this.items[esItemId];
@@ -241,13 +257,17 @@
     };
 
     var esDao = {
-        esclient: elasticsearch.Client({hosts: ['192.168.1.6:9200']}),
+        //esclient: elasticsearch.Client({hosts: ['192.168.1.6:9200']}),
+        esclient: elasticsearch.Client({hosts: ['http://dwalin-us-east-1.searchly.com/api-key/27d4807c8d63c036b5f1e2efbacaa01f']}),
 
         /*
          * Store a new item in ElasticSearch
          */
         insertItem: function(item, addedItemCallback)
         {
+            // set the creation date
+            item.creationDateMsec = Date.now();
+            
             // call ES indexer
             this.esclient.index({
               index: 'items',
@@ -324,9 +344,12 @@
             category: item.category,
             itemName: item.itemName,
             rating: item.rating,
+            creationDateMsec: item.creationDateMsec,
             esItemId: this.itemIndex
         };
         
         return clonedItem;
     }
+    
+    $("body").tooltip({ selector: '[data-toggle=tooltip]' });
 })();

@@ -4,15 +4,17 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name = "viewport" content = "width = 320, user-scalable = no">
         <title>Rate Everything</title>
 
         <!-- Bootstrap -->
-        <link href="css/bootstrap.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
         <!-- Custom styles for this template -->
         <link href="css/starter-template.css" rel="stylesheet">
-        <!-- Bootstrap theme 
+        <!-- Bootstrap theme
         <link href="css/bootstrap-theme.min.css" rel="stylesheet">
-        -->
+         -->
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -22,7 +24,6 @@
         <![endif]-->
     </head>
     <body role="document" ng-controller="RateEverythingCtrl">
-        
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -34,63 +35,30 @@
                     </button>
                     <a class="navbar-brand" href="index.html">Rate Everything</a>
                 </div>
-                <div class="collapse navbar-collapse">
+                <div class="collapse navbar-collapse" id="navBar">
                     <ul class="nav navbar-nav">
                     <li class="active"><a href="index.html">Home</a></li>
                     <li><a href="about.html">About</a></li>
                     </ul>
-                    
-                    
-
                     <form class="navbar-form navbar-right" role="form" ng-submit="login()" ng-show="isLoggedIn()">
-<!--
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Username" ng-model="userName" ng-disabled="isLoggedIn()" autofocus  focus-on="loggedOut" /> 
-                        </div>
--->
-                        <button type="submit" class="btn btn-primary" >{{isLoggedIn() ? "Logout" : "Login"}}</button>
+                        <button type="submit" class="btn btn-primary" data-toggle="collapse" data-target="#navBar">Logout</button>
                     </form>
-
                 </div><!--/.nav-collapse -->
             </div>
         </div>
 
         <div class="container">
-            
             <div class="starter-template">
-
-                <div>
-                    
-                </div>
-
                 <div ng-hide="isLoggedIn()">
-                    
                     <form class="form-inline" role="form" name="loginForm" ng-submit="login()" />
                         <input type="text" class="form-control" placeholder="Username" ng-model="userName" ng-disabled="isLoggedIn()" autofocus  focus-on="loggedOut" /> 
-                        <button type="submit" class="btn btn-primary" >{{isLoggedIn() ? "Logout" : "Login"}}</button>
+                        <button type="submit" class="btn btn-primary" >Login</button>
                     </form>
                 </div>
                 <div ng-show="isLoggedIn()">
-                
                     <div>
-<!--
-                        <form class="form-inline" role="form" name="addItemForm" ng-submit="addNewItem()">
-                            <input type="text" class="form-control" placeholder="Category" ng-model="newItem.category" ng-keyup="search('additem')" /> 
-                            <input type="text" class="form-control" placeholder="Item Name" ng-model="newItem.itemName" ng-keyup="search('additem')" focus-on="addItemToCategoryRequest" /> 
-                            <select class="form-control" ng-model="newItem.rating">
-                                <option value="">Rating...</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                                <option value="Maybe">Maybe</option>
-                            </select>
-                            <button type="submit" class="btn btn-success">Add New Item</button>
-                        </form>
-
-                        <br>
--->
-
                         <form class="form" role="form" name="searchItemsForm" />
-                            <input type="text" class="form-control" placeholder="Search anything..." ng-model="searchString" ng-keyup="search('searchbar')" focus-on="focusSearch" />
+                            <input type="text" class="form-control" placeholder="Search anything..." ng-model="searchString" ng-keyup="search()" focus-on="focusSearch" />
                         </form>
                     </div>
 
@@ -110,9 +78,11 @@
                                 {{category}} [<a href="#" ng-click="addItemToCategoryRequest(category)" data-toggle="modal" data-target="#addItemModal">+add</a>]
                             </h4>
                             <ul style="padding:0px 20px" ng-repeat-end>
-                                <li ng-repeat="item in items track by item.esItemId">
-                                    {{item.itemName}}: {{item.rating}}
-                                    <a href="#" ng-click="deleteItem(item)">delete</a>
+                                <li ng-repeat="item in items | orderBy:'creationDateMsec':true track by item.esItemId ">
+                                    <div data-toggle="tooltip" data-placement="left" title="{{item.creationDateMsec | date:'MM/dd/yyyy @ h:mma'}}">
+                                        {{item.itemName}}: {{item.rating}}
+                                        <a href="#" ng-click="deleteItem(item)">delete</a>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -127,9 +97,9 @@
                                 </div>
                                 <div class="modal-body">
                                     <form role="form" name="addItemForm" ng-submit="addNewItem()">
-                                        <input type="text" class="form-control" placeholder="Category" ng-model="newItem.category" /> 
-                                        <input type="text" class="form-control" placeholder="Item Name" ng-model="newItem.itemName" focus-on="addItemToCategoryRequest" /> 
-                                        <select class="form-control" ng-model="newItem.rating">
+                                        <input type="text" class="form-control" placeholder="Category" ng-model="newItem.category" required ng-keyup="searchWhileAdding()" /> 
+                                        <input type="text" class="form-control" placeholder="Item Name" ng-model="newItem.itemName" focus-on="addItemToCategoryRequest" ng-keyup="searchWhileAdding()" required /> 
+                                        <select class="form-control" ng-model="newItem.rating" required>
                                             <option value="">Rating...</option>
                                             <option value="Yes">Yes</option>
                                             <option value="No">No</option>
@@ -143,9 +113,11 @@
                                             {{category}} [<a href="#" ng-click="addItemToCategoryRequest(category)">+add</a>]
                                         </h4>
                                         <ul style="padding:0px 20px" ng-repeat-end>
-                                            <li ng-repeat="item in items track by item.esItemId">
-                                                {{item.itemName}}: {{item.rating}}
-                                                <a href="#" ng-click="deleteItem(item)">delete</a>
+                                            <li ng-repeat="item in items | orderBy:'creationDateMsec':true track by item.esItemId ">
+                                                <div data-toggle="tooltip" data-placement="left" title="{{item.creationDateMsec | date:'MM/dd/yyyy @ h:mma'}}">
+                                                    {{item.itemName}}: {{item.rating}}
+                                                    <a href="#" ng-click="deleteItem(item)">delete</a>
+                                                </div>
                                             </li>
                                         </ul>
                                     </div>
