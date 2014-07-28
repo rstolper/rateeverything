@@ -51,6 +51,8 @@
                 dropItemsIndex();
                 $scope.allItems = {};
                 $scope.searchResultItems = {};
+                $scope.newItemSearchByCategory = {};
+                $scope.itemsByCategory = {};
                 $scope.newItem = {};
                 $scope.searchString = "";
                 $scope.isSearchActive = false;
@@ -119,13 +121,6 @@
         };
         
         $scope.search = function () {
-           // var searchString = "";
-            //if (searchBy == 'searchbar')
-            //    searchString = $scope.searchString;
-            //else if (searchBy == 'additem')
-                //searchString = ($scope.newItem.category || '') + " " + ($scope.newItem.itemName || '');
-            //    searchString = ($scope.newItem.category || '');
-            
             if ($scope.searchString && $scope.searchString.trim().length > 0)
             {
                 $scope.isSearchActive = true;
@@ -336,7 +331,7 @@
         }
     }
     
-    // TODO: This is NOT maintainable. Strategic solution?
+    // TODO: This is not maintainable. Strategic solution?
     function cloneItem(item)
     {
         var clonedItem = {
@@ -351,5 +346,6 @@
         return clonedItem;
     }
     
+    // Need to manually "init" the bootstrap tooltips
     $("body").tooltip({ selector: '[data-toggle=tooltip]' });
 })();

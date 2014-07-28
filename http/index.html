@@ -51,6 +51,7 @@
             <div class="starter-template">
                 <div ng-hide="isLoggedIn()">
                     <form class="form-inline" role="form" name="loginForm" ng-submit="login()" />
+                        <p>There is no security, pick any username you want and stick with it.</p>
                         <input type="text" class="form-control" placeholder="Username" ng-model="userName" ng-disabled="isLoggedIn()" autofocus  focus-on="loggedOut" /> 
                         <button type="submit" class="btn btn-primary" >Login</button>
                     </form>
