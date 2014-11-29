@@ -253,7 +253,8 @@
 
     var esDao = {
         //esclient: elasticsearch.Client({hosts: ['192.168.1.6:9200']}),
-        esclient: elasticsearch.Client({hosts: ['http://dwalin-us-east-1.searchly.com/api-key/27d4807c8d63c036b5f1e2efbacaa01f']}),
+        esclient: elasticsearch.Client({hosts: ['127.0.0.1:9200']}),
+        //esclient: elasticsearch.Client({hosts: ['http://dwalin-us-east-1.searchly.com/api-key/27d4807c8d63c036b5f1e2efbacaa01f']}),
 
         /*
          * Store a new item in ElasticSearch
