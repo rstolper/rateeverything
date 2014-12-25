@@ -1,0 +1,33 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 20px 0px;
+  text-align: left;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:2) {
+    select:focus, textarea:focus, input:focus {
+        font-size: 16px;
+        /* background:#eee; */
+    }
+ }
+
+ body {
+   padding-top: 70px;
+   padding-bottom: 30px;
+ }
+
+ .theme-dropdown .dropdown-menu {
+   position: static;
+   display: block;
+   margin-bottom: 20px;
+ }
+
+ .theme-showcase > p > .btn {
+   margin: 5px 0;
+ }
+
+ .theme-showcase .navbar .container {
+   width: auto;
+ }
