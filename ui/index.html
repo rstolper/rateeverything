@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="rateeverythingApp">
+<html lang="en" ng-app="rateeverything">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,7 +24,7 @@
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
     </head>
-    <body role="document" ng-controller="RateEverythingCtrl">
+    <body role="document" ng-controller="dashboardCtrl">
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -136,11 +136,15 @@
         </div>
         
         <script src="lib/bower_components/lodash/dist/lodash.min.js"></script>
-        <script src="lib/bower_components/jquery/dist/jquery-1.9.1.js"></script>
+        <script src="lib/bower_components/jquery/dist/jquery.min.js"></script>
         <script src="lib/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="lib/bower_components/angular/angular.js"></script>
         <script src="lib/bower_components/elasticsearch/elasticsearch.min.js"></script>
         <script src="lib/bower_components/lunr.js/lunr.min.js"></script>
+
+        <script src="js/directives.js"></script>
+        <script src="js/services.js"></script>
+        <script src="js/controllers.js"></script>
         <script src="js/main.js"></script>
     </body>
 </html>
