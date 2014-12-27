@@ -1,2 +1,2 @@
 @title es
-..\..\elasticsearch-1.2.2\bin\elasticsearch.bat
+..\tools\elasticsearch-1.2.2\bin\elasticsearch.bat
