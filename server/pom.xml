@@ -26,9 +26,14 @@
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-grizzly2-http</artifactId>
         </dependency>
-         <dependency>
+         <!--<dependency>-->
+            <!--<groupId>org.glassfish.jersey.media</groupId>-->
+            <!--<artifactId>jersey-media-moxy</artifactId>-->
+        <!--</dependency>-->
+        <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-moxy</artifactId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>2.14</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -62,7 +67,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>org.stolpr.rateeverything.Main</mainClass>
+                    <mainClass>rateeverything.startup.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>

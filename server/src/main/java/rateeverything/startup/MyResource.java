@@ -1,17 +1,17 @@
-package org.stolpr.rateeverything;
+package rateeverything.startup;
+
+import rateeverything.item.Item;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Root resource (exposed at "myresource" path)
  */
-@Path("items")
-public class ItemsResource {
+@Path("myresource")
+public class MyResource {
 
     /**
      * Method handling HTTP GET requests. The returned object will be sent
@@ -23,14 +23,5 @@ public class ItemsResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String getIt() {
         return "Got it!";
-    }
-
-    @GET
-    @Path("json")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getItJson() {
-        Map<String, Object> result = new HashMap<>();
-        result.put("name", "x");
-        return result;
     }
 }
