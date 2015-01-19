@@ -18,7 +18,7 @@ public class InMemoryItemPersistence implements ItemPersistence {
 
     @Override
     public Item selectItem(long itemId) {
-        return items.getOrDefault(itemId, Item.DEFAULT);
+        return items.get(itemId);
     }
 
     @Override

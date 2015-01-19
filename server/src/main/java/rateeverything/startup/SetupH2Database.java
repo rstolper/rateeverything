@@ -9,7 +9,7 @@ import java.sql.*;
  */
 public class SetupH2Database {
 
-    public static String dbLoc = "~/dev/tools/h2db";
+    public static String dbLoc = (System.getenv("H2DB")!=null?System.getenv("H2DB"):"~/dev/tools/h2db");
     public static String dbName = "rateeverything";
     public static String dbUrl = "jdbc:h2:" + dbLoc + "/" + dbName;
 
