@@ -1,0 +1,1 @@
+mvn clean install -s ~/app-root/data/settings.xml
