@@ -2,9 +2,9 @@
 
     var app = angular.module('rateeverything.controllers', ['rateeverything.services']);
 
-    app.controller('dashboardCtrl', function ($scope, esDao, cloneItem, lunrService) {
+    app.controller('dashboardCtrl', function ($scope, restDao, cloneItem, lunrService) {
 
-        $scope.dao = esDao;
+        $scope.dao = restDao;
 
         $scope.newItem = {};
         $scope.allItems = {}; // static maintainer of all items the user has
@@ -47,7 +47,6 @@
                 $scope.newItem = {};
                 $scope.searchString = "";
                 $scope.isSearchActive = false;
-                $scope.$apply();
                 $scope.$broadcast('loggedOut');
             }
             else {
@@ -65,7 +64,6 @@
                         newItemHandler(receivedItems[key]);
                     }
                     refreshActiveSearch();
-                    $scope.$apply();
                     $scope.$broadcast('focusSearch');
                 });
             }
@@ -73,41 +71,39 @@
 
         $scope.addNewItem = function () {
             // exit if anything is empty
-            if (!$scope.loggedInUser || !$scope.newItem.category || !$scope.newItem.itemName || !$scope.newItem.rating)
+            if (!$scope.loggedInUser || !$scope.newItem.category || !$scope.newItem.name || !$scope.newItem.rating)
                 return;
 
-            $scope.newItem.userName = $scope.loggedInUser
+            $scope.newItem.owner = $scope.loggedInUser
             $scope.dao.insertItem($scope.newItem, function (item) {
                 newItemHandler(item);
-                $scope.newItem.itemName = "";
+                $scope.newItem.name = "";
                 $scope.newItem.rating = "";
                 //$scope.search('searchbar')
                 refreshActiveSearch();
                 // TODO: be more intelligent about knowing if addItem modal is open
                 $scope.searchWhileAdding();
-                $scope.$apply();
                 $scope.$broadcast('addItemToCategoryRequest');
             });
         };
 
         $scope.addItemToCategoryRequest = function(category) {
             $scope.newItem.category = category;
-            $scope.newItem.itemName = "";
+            $scope.newItem.name = "";
             $scope.newItem.rating = "";
             $scope.searchWhileAdding();
             $scope.$broadcast('addItemToCategoryRequest');
         }
 
         $scope.deleteItem = function (item) {
-            var itemId = item.esItemId;
+            var itemId = item.id;
             $scope.dao.deleteItem(itemId, function () {
                 delete $scope.allItems[itemId];
-                lunrService.removeItemFromLunr({esItemId: itemId});
+                lunrService.removeItemFromLunr({id: itemId});
                 //$scope.newItem = item; // for ease of readding
                 refreshActiveSearch();
                 // TODO: be more intelligent about knowing if addItem modal is open
                 $scope.searchWhileAdding();
-                $scope.$apply();
             });
         };
 
@@ -125,12 +121,12 @@
         }
 
         $scope.searchWhileAdding = function () {
-            $scope.addItemSearchString = ($scope.newItem.category || '') + " " + ($scope.newItem.itemName || '');
+            $scope.addItemSearchString = ($scope.newItem.category || '') + " " + ($scope.newItem.name || '');
             if ($scope.addItemSearchString && $scope.addItemSearchString.trim().length > 0)
             {
                 var results = {};
-                lunrService.findItems($scope.addItemSearchString).forEach(function(item) {
-                    results[item.esItemId] = item;
+                lunrService.findItems($scope.addItemSearchString, $scope.allItems).forEach(function(item) {
+                    results[item.id] = item;
                 });
                 $scope.newItemSearchByCategory = _.groupBy(results, 'category');
             }
@@ -149,7 +145,7 @@
         }
 
         function newItemHandler(item) {
-            $scope.allItems[item.esItemId] = item
+            $scope.allItems[item.id] = item
             lunrService.addItemToLunr(item)
         }
 
@@ -158,8 +154,8 @@
             if ($scope.isSearchActive)
             {
                 $scope.searchResultItems = {};
-                lunrService.findItems($scope.searchString).forEach(function(item) {
-                    $scope.searchResultItems[item.esItemId] = item;
+                lunrService.findItems($scope.searchString, $scope.allItems).forEach(function(item) {
+                    $scope.searchResultItems[item.id] = item;
                 });
             }
             else

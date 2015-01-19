@@ -2,85 +2,39 @@
 
     var app = angular.module('rateeverything.services', []);
 
-    app.factory('esDao', function(cloneItem) {
+    app.factory('restDao', function(cloneItem, $http) {
         return {
-            //esclient: elasticsearch.Client({hosts: ['192.168.1.6:9200']}),
-            esclient: elasticsearch.Client({hosts: ['127.0.0.1:9200']}),
-            //esclient: elasticsearch.Client({hosts: ['http://dwalin-us-east-1.searchly.com/api-key/27d4807c8d63c036b5f1e2efbacaa01f']}),
-
-            /*
-             * Store a new item in ElasticSearch
-             */
             insertItem: function(item, addedItemCallback)
             {
-                // set the creation date
-                item.creationDateMsec = Date.now();
-
-                // call ES indexer
-                this.esclient.index({
-                  index: 'items',
-                  type: 'item',
-                  body: item
-                }, function (err, resp) {
-                    if (err) {
-                        alert(err);
-                    } else {
-                        var newItem = cloneItem(item);
-                        newItem.esItemId = resp._id;
-                        addedItemCallback(newItem);
-                    }
-                });
+                $http.post('/app/api/v1/items', item).
+                    success(function(data, status, headers, config) {
+                        addedItemCallback(data);
+                    }).
+                    error(function(data, status, headers, config) {
+                        alert("item post failed :(");
+                    });
             },
 
-            /*
-             * Get the list of items for a user from ElasticSearch
-             */
             getAllItems: function (userName, itemsReceivedCallback)
             {
-                this.esclient.search({
-                  index: 'items',
-                  size: 50,
-                  body: {
-                    query: {
-                        filtered: {
-                            query: {
-                                match_all: {
-                                }
-                            },
-                            filter: {
-                                term: { "userName": userName }
-                            }
-                        }
-                    }
-                  }
-                }).then(function (resp) {
-                    // for each item
-                    var items = []
-                    var hits = resp.hits.hits;
-                    hits.forEach(function(resEntry) {
-                        var item = resEntry._source;
-                        item.esItemId = resEntry._id;
-                        items.push(item);
-                    })
-                    itemsReceivedCallback(items);
-                }, function(err) {
-                    alert(err);
-                });
+                $http.get('/app/api/v1/items?owner='+userName).
+                    success(function(data, status, headers, config) {
+                        itemsReceivedCallback(data);
+                    }).
+                    error(function(data, status, headers, config) {
+                        alert("get all items failed :(");
+                    });
             },
 
-            deleteItem: function (esItemId, itemDeletedCallback)
+            deleteItem: function (itemId, itemDeletedCallback)
             {
-                this.esclient.delete({
-                    index: 'items',
-                    type: 'item',
-                    id: esItemId
-                }, function (err, resp) {
-                    if (err) {
-                        alert(err);
-                    } else {
-                        itemDeletedCallback(esItemId);
-                    }
-                });
+                $http.delete('/app/api/v1/items/' + itemId).
+                    success(function(data, status, headers, config) {
+                        itemDeletedCallback();
+                    }).
+                    error(function(data, status, headers, config) {
+                        alert("delete item failed :(");
+                    });
             }
         }
     });
@@ -88,13 +42,13 @@
     app.factory('dummyDao', function(cloneItem) {
         return dummyDao = {
             itemIndex: 1,
-            items: {"0": {category:"test", itemName:"test", userName:"test", rating:"Yes", esItemId:"0"}},
+            items: {"0": {category:"test", name:"test", userName:"test", rating:"Yes", id:"0"}},
             insertItem: function (item, addedItemCallback) {
                 // simulate a new item object..
                 var addedItem = cloneItem(item);
-                addedItem.esItemId = this.itemIndex++;
+                addedItem.id = this.itemIndex++;
 
-                this.items[addedItem.esItemId] = addedItem;
+                this.items[addedItem.id] = addedItem;
                 addedItemCallback(addedItem);
             },
             getAllItems: function (userName, itemsReceivedCallback) {
@@ -107,9 +61,9 @@
                     resolve(receivedItems);
                 }).then(itemsReceivedCallback);
             },
-            deleteItem: function (esItemId, itemDeletedCallback) {
-                delete this.items[esItemId];
-                itemDeletedCallback(esItemId);
+            deleteItem: function (id, itemDeletedCallback) {
+                delete this.items[id];
+                itemDeletedCallback(id);
             }
         };
     });
@@ -117,12 +71,12 @@
     app.factory('cloneItem', function() {
         return function (item) {
             var clonedItem = {
-                userName: item.userName,
+                owner: item.owner,
                 category: item.category,
-                itemName: item.itemName,
+                name: item.name,
                 rating: item.rating,
-                creationDateMsec: item.creationDateMsec,
-                esItemId: this.itemIndex
+                creationDate: item.creationDate,
+                id: this.itemIndex
             };
 
             return clonedItem;
@@ -137,8 +91,8 @@
         {
             lunrItemsIndex = lunr(function () {
                 this.field('category')
-                this.field('itemName')
-                this.ref('esItemId')
+                this.field('name')
+                this.ref('id')
             })
         }
 
@@ -151,7 +105,7 @@
                 if (!lunrItemsIndex) createItemsIndex();
                 lunrItemsIndex.remove(item);
             },
-            findItems : function (searchString) {
+            findItems : function (searchString, allItems) {
                 if (!lunrItemsIndex) createItemsIndex();
 
                 // search the items index
@@ -160,7 +114,7 @@
                 // get the items from internal list
                 var resultItems = [];
                 resultRefs.forEach(function(entry) {
-                    resultItems.push($scope.allItems[entry.ref])
+                    resultItems.push(allItems[entry.ref])
                 });
 
                 return resultItems;
