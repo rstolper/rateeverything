@@ -1,0 +1,1 @@
+web: java -cp server/target/classes:server/target/dependency/* Main
