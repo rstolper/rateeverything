@@ -58,10 +58,13 @@ public class Main {
                 , BASE_URI));
         //server.wait();
         System.in.read(); // just run it forever till the process dies
-        System.out.println("read a line of input");
-        args.wait();
-        System.out.println("finished waiting, shutting down server");
-        server.shutdown();
+        System.in.read(); // just run it forever till the process dies
+        System.out.println("read two lines of input");
+        while(true) {
+            Thread.sleep(1000000);
+        }
+        //System.out.println("finished waiting, shutting down server");
+        //server.shutdown();
 //        while (true) {
 //            Thread.sleep(100000);
 //        }
