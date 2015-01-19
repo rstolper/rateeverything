@@ -20,7 +20,8 @@ import java.net.URI;
  */
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:8080/app/";
+    //public static final String BASE_URI = "http://localhost:8080/app/";
+    public static final String BASE_URI = "http://localhost:"+(System.getenv("PORT")!=null?System.getenv("PORT"):"9998")+"/app/";
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
@@ -56,9 +57,9 @@ public class Main {
                 , BASE_URI));
         //System.in.read();
         //server.shutdown();
-        while (true) {
-            Thread.sleep(100000);
-        }
+//        while (true) {
+//            Thread.sleep(100000);
+//        }
     }
 }
 
