@@ -50,6 +50,7 @@ public class Main {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException, InterruptedException {
+        System.out.println("$PORT: " + System.getenv("PORT"));
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\n"
