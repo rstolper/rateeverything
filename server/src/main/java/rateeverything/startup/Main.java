@@ -56,8 +56,12 @@ public class Main {
                 + "%sapplication.wadl\n"
                 //+ "Hit enter to stop it..."
                 , BASE_URI));
-        //System.in.read();
-        //server.shutdown();
+        //server.wait();
+        System.in.read(); // just run it forever till the process dies
+        System.out.println("read a line of input");
+        args.wait();
+        System.out.println("finished waiting, shutting down server");
+        server.shutdown();
 //        while (true) {
 //            Thread.sleep(100000);
 //        }
