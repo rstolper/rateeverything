@@ -1,1 +1,1 @@
-web: java -cp server/target/classes:server/target/dependency/* Main
+web: java -cp server/target/classes:server/target/dependency/* rateeverything.startup.Main
