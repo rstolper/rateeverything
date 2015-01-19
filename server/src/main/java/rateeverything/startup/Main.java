@@ -48,7 +48,7 @@ public class Main {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\n"
@@ -56,6 +56,9 @@ public class Main {
                 , BASE_URI));
         //System.in.read();
         //server.shutdown();
+        while (true) {
+            Thread.sleep(100000);
+        }
     }
 }
 
