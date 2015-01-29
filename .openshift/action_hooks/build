@@ -1,1 +1,2 @@
+cd app-root/repo
 mvn clean install -s $OPENSHIFT_HOMEDIR/app-root/data/settings.xml
