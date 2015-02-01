@@ -1,4 +1,4 @@
-cd app-root/repo
+cd $OPENSHIFT_REPO_DIR
 declare -x PORT=$OPENSHIFT_DIY_PORT
 declare -x HOST=$OPENSHIFT_DIY_IP
 declare -x H2DB="$OPENSHIFT_HOMEDIR/app-root/data/h2db"
