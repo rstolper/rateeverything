@@ -1,1 +1,3 @@
-echo "this sucks, i'm useless"
+LATESTPID=`cat $OPENSHIFT_DIY_LOG_DIR/latestpid`
+echo "Killing pid $LATESTPID"
+kill $LATESTPID
