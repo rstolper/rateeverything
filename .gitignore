@@ -2,3 +2,6 @@
 .idea/
 *.iml
 *.class
+server/target
+ui/target
+target
