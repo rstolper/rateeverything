@@ -2,5 +2,5 @@ cd $OPENSHIFT_REPO_DIR
 declare -x PORT=$OPENSHIFT_DIY_PORT
 declare -x HOST=$OPENSHIFT_DIY_IP
 declare -x H2DB="$OPENSHIFT_HOMEDIR/app-root/data/h2db"
-nohup java -cp $OPENSHIFT_REPO_DIR/server/target/classes:$OPENSHIFT_REPO_DIR/server/target/dependency/* rateeverything.startup.Main < /dev/null 1> $OPENSHIFT_DIY_LOG_DIR/app.log 2>&1 &
+nohup java -cp $OPENSHIFT_REPO_DIR/server/target/classes:$OPENSHIFT_REPO_DIR/server/target/dependency/* com.romanstolper.rateeverything.startup.Main < /dev/null 1> $OPENSHIFT_DIY_LOG_DIR/app.log 2>&1 &
 echo $! > $OPENSHIFT_DIY_LOG_DIR/latestpid
