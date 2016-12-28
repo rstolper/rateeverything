@@ -1,4 +1,8 @@
-package com.romanstolper.rateeverything.users.service;
+package com.romanstolper.rateeverything.user.service;
+
+import com.romanstolper.rateeverything.item.domain.Item;
+import com.romanstolper.rateeverything.item.persistence.H2ItemPersistence;
+import com.romanstolper.rateeverything.item.persistence.ItemPersistence;
 
 import javax.inject.Singleton;
 import java.util.Collection;

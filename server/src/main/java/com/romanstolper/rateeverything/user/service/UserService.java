@@ -1,4 +1,4 @@
-package com.romanstolper.rateeverything.users.service;
+package com.romanstolper.rateeverything.user.service;
 
 import com.romanstolper.rateeverything.item.domain.Item;
 

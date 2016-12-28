@@ -1,4 +1,4 @@
-package com.romanstolper.rateeverything.users.persistence;
+package com.romanstolper.rateeverything.user.persistence;
 
 import com.romanstolper.rateeverything.item.domain.Item;
 import com.romanstolper.rateeverything.item.domain.Rating;

@@ -2,7 +2,7 @@ package com.romanstolper.rateeverything.item.external;
 
 import com.romanstolper.rateeverything.item.service.ItemService;
 import com.romanstolper.rateeverything.item.service.ItemServiceImpl;
-import com.romanstolper.rateeverything.users.external.UsersResource;
+import com.romanstolper.rateeverything.user.external.UsersResource;
 
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
@@ -10,8 +10,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 

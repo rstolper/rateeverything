@@ -1,4 +1,4 @@
-package com.romanstolper.rateeverything.users.external;
+package com.romanstolper.rateeverything.user.external;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -17,10 +17,7 @@ public class UsersResource {
     @Context
     Request request;
 
-    public UsersResource(
-            UriInfo uriInfo,
-            Request request
-    ) {
+    public UsersResource(UriInfo uriInfo, Request request) {
         this.uriInfo = uriInfo;
         this.request = request;
     }

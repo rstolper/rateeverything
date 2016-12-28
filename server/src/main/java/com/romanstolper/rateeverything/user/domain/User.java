@@ -1,4 +1,4 @@
-package com.romanstolper.rateeverything.users.domain;
+package com.romanstolper.rateeverything.user.domain;
 
 import java.util.UUID;
 
