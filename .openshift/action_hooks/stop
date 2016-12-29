@@ -1,7 +1,7 @@
 LATESTPID=`cat $OPENSHIFT_DIY_LOG_DIR/latestpid`
-if ps -p $PID > /dev/null
+if ps -p $LATESTPID > /dev/null
 then
-   echo "$PID is running"
+   echo "$LATESTPID is running"
    # Do something knowing the pid exists, i.e. the process with $PID is running
    echo "Killing pid $LATESTPID"
    kill $LATESTPID
