@@ -1,12 +1,11 @@
 package com.romanstolper.rateeverything.item.external.dto;
 
 /**
- * Created by roman on 1/18/2015.
+ * Input payload for creating a new item
  */
 public class ItemCreateDTO {
     private String name;
     private String category;
-    private String owner;
     private String rating;
 
     public String getName() {
@@ -31,13 +30,5 @@ public class ItemCreateDTO {
 
     public void setRating(String rating) {
         this.rating = rating;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 }

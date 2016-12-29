@@ -1,8 +1,14 @@
-package com.romanstolper.rateeverything.item.external;
+package com.romanstolper.rateeverything.web;
 
+import com.romanstolper.rateeverything.item.external.ItemsResource;
+import com.romanstolper.rateeverything.item.persistence.H2ItemPersistence;
 import com.romanstolper.rateeverything.item.service.ItemService;
 import com.romanstolper.rateeverything.item.service.ItemServiceImpl;
 import com.romanstolper.rateeverything.user.external.UsersResource;
+import com.romanstolper.rateeverything.user.persistence.H2UserPersistence;
+import com.romanstolper.rateeverything.user.service.UserService;
+import com.romanstolper.rateeverything.user.service.UserServiceImpl;
+import com.romanstolper.rateeverything.util.SetupH2Database;
 
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
@@ -12,38 +18,34 @@ import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-/**
- * Created by roman on 1/18/2015.
- */
 @Path("api/v1")
 @Produces(MediaType.APPLICATION_JSON)
 @Singleton
 public class RootResource {
+
+    private ItemService itemService = new ItemServiceImpl(
+            new H2ItemPersistence(SetupH2Database.dbUrl)
+    );
+    private UserService userService = new UserServiceImpl(
+            new H2UserPersistence(SetupH2Database.dbUrl)
+    );
+
     @Context UriInfo uriInfo;
     @Context Request request;
-
-    private ItemService itemService = new ItemServiceImpl();
 
     public RootResource() {}
 
     @GET
     public Response getResources() {
         Map<String, URI> resources = new HashMap<>();
-        resources.put("Items", uriInfo.getAbsolutePathBuilder().path("items").build());
-        //resources.put("Item", uriInfo.getAbsolutePathBuilder().path("items").path("{itemId}").build("-itemId-"));
         resources.put("Users", uriInfo.getAbsolutePathBuilder().path("users").build());
-        //resources.put("User", uriInfo.getAbsolutePathBuilder().path("users").path("{userName}").build("-userName-"));
         return Response.ok().entity(resources).build();
-    }
-
-    @Path("items")
-    public ItemsResource getItemsResource() {
-        return new ItemsResource(itemService, uriInfo, request);
     }
 
     @Path("users")
     public UsersResource getUsersResource() {
-        return new UsersResource(uriInfo, request);
+        return new UsersResource(userService, itemService, uriInfo, request);
     }
 }

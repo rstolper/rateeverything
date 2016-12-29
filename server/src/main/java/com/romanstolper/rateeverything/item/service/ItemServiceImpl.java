@@ -1,39 +1,35 @@
 package com.romanstolper.rateeverything.item.service;
 
 import com.romanstolper.rateeverything.item.domain.Item;
-import com.romanstolper.rateeverything.item.persistence.H2ItemPersistence;
+import com.romanstolper.rateeverything.item.domain.ItemId;
 import com.romanstolper.rateeverything.item.persistence.ItemPersistence;
+import com.romanstolper.rateeverything.user.domain.UserId;
 
 import javax.inject.Singleton;
 import java.util.Collection;
 
-/**
- * Created by roman on 1/3/15.
- */
 @Singleton
 public class ItemServiceImpl implements ItemService {
 
-    //private ItemPersistence itemPersistence = new PrePopulatedInMemoryItemPersistence();
-    private ItemPersistence itemPersistence = new H2ItemPersistence();
+    private final ItemPersistence itemPersistence;
 
-    @Override
-    public Collection<Item> getAllItems() {
-        return itemPersistence.selectItems();
+    public ItemServiceImpl(ItemPersistence itemPersistence) {
+        this.itemPersistence = itemPersistence;
     }
 
     @Override
-    public Collection<Item> getAllItemsByOwner(String owner) {
-        return itemPersistence.selectItemsByOwner(owner);
+    public Collection<Item> getAllItems(UserId userId) {
+        return itemPersistence.getItemsForUser(userId);
     }
 
     @Override
-    public Item getItem(long itemId) {
-        return itemPersistence.selectItem(itemId);
+    public Item getItem(UserId userId, ItemId itemId) {
+        return itemPersistence.getItem(userId, itemId);
     }
 
     @Override
-    public boolean existsItem(long itemId) {
-        Item item = itemPersistence.selectItem(itemId);
+    public boolean existsItem(UserId userId, ItemId itemId) {
+        Item item = itemPersistence.getItem(userId, itemId);
         return (item != null) && (item != Item.DEFAULT);
     }
 
@@ -48,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item deleteItem(long itemId) {
-        return itemPersistence.deleteItem(itemId);
+    public Item deleteItem(UserId userId, ItemId itemId) {
+        return itemPersistence.deleteItem(userId, itemId);
     }
 }

@@ -6,24 +6,24 @@ import java.net.URI;
 import java.util.Date;
 
 /**
- * Created by roman on 1/18/2015.
+ * Item object for serialized transfer
  */
 public class ItemDTO {
     private URI url;
-    private long id;
+    private String itemId;
+    private String userId;
     private String name;
     private String category;
-    private String owner;
     private String rating;
     private long creationDate;
 
     public ItemDTO() {}
 
     public ItemDTO(Item item) {
-        this.setId(item.getId());
+        this.setItemId(item.getItemId().getValue());
+        this.setUserId(item.getUserId().getValue());
         this.setName(item.getName());
         this.setCategory(item.getCategory());
-        this.setOwner(item.getOwner());
         this.setRating(item.getRating().getDisplayText());
         this.setCreationDate(item.getCreationDate().getTime());
     }
@@ -36,12 +36,20 @@ public class ItemDTO {
         this.url = url;
     }
 
-    public long getId() {
-        return id;
+    public String getItemId() {
+        return itemId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -58,14 +66,6 @@ public class ItemDTO {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 
     public String getRating() {

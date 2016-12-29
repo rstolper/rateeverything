@@ -1,24 +1,24 @@
 package com.romanstolper.rateeverything.item.service;
 
 import com.romanstolper.rateeverything.item.domain.Item;
+import com.romanstolper.rateeverything.item.domain.ItemId;
+import com.romanstolper.rateeverything.user.domain.UserId;
 
 import java.util.Collection;
 
 /**
- * Created by roman on 1/18/2015.
+ * Item CRUD interactions
  */
 public interface ItemService {
-    Collection<Item> getAllItems();
+    Collection<Item> getAllItems(UserId userId);
 
-    Collection<Item> getAllItemsByOwner(String owner);
+    Item getItem(UserId userId, ItemId itemId);
 
-    Item getItem(long itemId);
-
-    boolean existsItem(long itemId);
+    boolean existsItem(UserId userId, ItemId itemId);
 
     Item createItem(Item item);
 
     Item updateItem(Item item);
 
-    Item deleteItem(long itemId);
+    Item deleteItem(UserId userId, ItemId itemId);
 }

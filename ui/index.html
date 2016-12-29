@@ -53,7 +53,7 @@
                 <div ng-hide="isLoggedIn()">
                     <form class="form-inline" role="form" name="loginForm" ng-submit="login()" />
                         <p>There is no security, pick any username you want and stick with it.</p>
-                        <input type="text" class="form-control" placeholder="Username" ng-model="userName" ng-disabled="isLoggedIn()" autofocus  focus-on="loggedOut" /> 
+                        <input type="text" class="form-control" placeholder="Username" ng-model="userId" ng-disabled="isLoggedIn()" autofocus  focus-on="loggedOut" />
                         <button type="submit" class="btn btn-primary" >Login</button>
                     </form>
                 </div>
@@ -80,7 +80,7 @@
                                 {{category}} [<a href="#" ng-click="addItemToCategoryRequest(category)" data-toggle="modal" data-target="#addItemModal">+add</a>]
                             </h4>
                             <ul style="padding:0px 20px" ng-repeat-end>
-                                <li ng-repeat="item in items | orderBy:'creationDate':true track by item.id ">
+                                <li ng-repeat="item in items | orderBy:'creationDate':true track by item.itemId ">
                                     <div data-toggle="tooltip" data-placement="left" title="{{item.creationDate | date:'MM/dd/yyyy @ h:mma'}}">
                                         {{item.name}}: {{item.rating}}
                                         <a href="#" ng-click="deleteItem(item)">delete</a>
@@ -115,7 +115,7 @@
                                             {{category}} [<a href="#" ng-click="addItemToCategoryRequest(category)">+add</a>]
                                         </h4>
                                         <ul style="padding:0px 20px" ng-repeat-end>
-                                            <li ng-repeat="item in items | orderBy:'creationDate':true track by item.id">
+                                            <li ng-repeat="item in items | orderBy:'creationDate':true track by item.itemId">
                                                 <div data-toggle="tooltip" data-placement="left" title="{{item.creationDate | date:'MM/dd/yyyy @ h:mma'}}">
                                                     {{item.name}}: {{item.rating}}
                                                     <a href="#" ng-click="deleteItem(item)">delete</a>

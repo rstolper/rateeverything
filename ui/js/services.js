@@ -4,9 +4,9 @@
 
     app.factory('restDao', function(cloneItem, $http) {
         return {
-            insertItem: function(item, addedItemCallback)
+            insertItem: function(userId, item, addedItemCallback)
             {
-                $http.post('/app/api/v1/items', item).
+                $http.post('/app/api/v1/users/'+userId+'/items', item).
                     success(function(data, status, headers, config) {
                         addedItemCallback(data);
                     }).
@@ -15,9 +15,9 @@
                     });
             },
 
-            getAllItems: function (userName, itemsReceivedCallback)
+            getAllItems: function (userId, itemsReceivedCallback)
             {
-                $http.get('/app/api/v1/items?owner='+userName).
+                $http.get('/app/api/v1/users/'+userId+'/items').
                     success(function(data, status, headers, config) {
                         itemsReceivedCallback(data);
                     }).
@@ -26,9 +26,9 @@
                     });
             },
 
-            deleteItem: function (itemId, itemDeletedCallback)
+            deleteItem: function (userId, itemId, itemDeletedCallback)
             {
-                $http.delete('/app/api/v1/items/' + itemId).
+                $http.delete('/app/api/v1/users/'+userId+'/items/'+itemId).
                     success(function(data, status, headers, config) {
                         itemDeletedCallback();
                     }).
@@ -42,16 +42,16 @@
     app.factory('dummyDao', function(cloneItem) {
         return dummyDao = {
             itemIndex: 1,
-            items: {"0": {category:"test", name:"test", userName:"test", rating:"Yes", id:"0"}},
+            items: {"0": {category:"test", name:"test", userId:"test", rating:"Yes", itemId:"0"}},
             insertItem: function (item, addedItemCallback) {
                 // simulate a new item object..
                 var addedItem = cloneItem(item);
-                addedItem.id = this.itemIndex++;
+                addedItem.itemId = this.itemIndex++;
 
-                this.items[addedItem.id] = addedItem;
+                this.items[addedItem.itemid] = addedItem;
                 addedItemCallback(addedItem);
             },
-            getAllItems: function (userName, itemsReceivedCallback) {
+            getAllItems: function (userId, itemsReceivedCallback) {
                 var dao = this;
                 var promise = new Promise(function(resolve, reject) {
                     var receivedItems = [];
@@ -61,9 +61,9 @@
                     resolve(receivedItems);
                 }).then(itemsReceivedCallback);
             },
-            deleteItem: function (id, itemDeletedCallback) {
-                delete this.items[id];
-                itemDeletedCallback(id);
+            deleteItem: function (itemId, itemDeletedCallback) {
+                delete this.items[itemId];
+                itemDeletedCallback(itemId);
             }
         };
     });
@@ -71,12 +71,12 @@
     app.factory('cloneItem', function() {
         return function (item) {
             var clonedItem = {
-                owner: item.owner,
                 category: item.category,
                 name: item.name,
                 rating: item.rating,
                 creationDate: item.creationDate,
-                id: this.itemIndex
+                userId: item.userId,
+                itemId: this.itemIndex
             };
 
             return clonedItem;
@@ -92,7 +92,7 @@
             lunrItemsIndex = lunr(function () {
                 this.field('category')
                 this.field('name')
-                this.ref('id')
+                this.ref('itemId')
             })
         }
 

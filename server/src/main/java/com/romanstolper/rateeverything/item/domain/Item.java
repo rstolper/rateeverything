@@ -1,45 +1,55 @@
 package com.romanstolper.rateeverything.item.domain;
 
+import com.romanstolper.rateeverything.user.domain.UserId;
+
 import java.util.Date;
 
 /**
- * Created by roman on 1/2/15.
+ * A RateEverything Item
  */
 public class Item {
-    private long id;
+    private ItemId itemId;
+    private UserId userId;
     private String name;
     private String category;
-    private String owner;
     private Rating rating;
     private Date creationDate;
 
-    public static final Item DEFAULT = new Item(0, "DEFAULT", "DEFAULT", "NOBODY", Rating.UNRATED);
+    public static final Item DEFAULT = new Item(new ItemId("0"), new UserId("NOBODY"),"DEFAULT", "DEFAULT", Rating.UNRATED);
 
-    public Item(long id, String name, String category, String owner, Rating rating) {
-        this.id = id;
+    public Item(ItemId itemId, UserId userId, String name, String category, Rating rating) {
+        this.itemId = itemId;
+        this.userId = userId;
         this.name = name;
         this.category = category;
-        this.owner = owner;
         this.rating = rating;
     }
 
-    public Item(long id, String name, String category, String owner, Rating rating, Date creationDate) {
-        this(id, name, category, owner, rating);
+    public Item(ItemId itemId, UserId userId, String name, String category, Rating rating, Date creationDate) {
+        this(itemId, userId, name, category, rating);
         this.creationDate = creationDate;
     }
 
-    public Item(long id, Item copyItem) {
-        this(id, copyItem.getName(), copyItem.getCategory(), copyItem.getOwner(), copyItem.getRating(), copyItem.getCreationDate());
+    public Item(ItemId itemId, Item copyItem) {
+        this(itemId, copyItem.getUserId(), copyItem.getName(), copyItem.getCategory(), copyItem.getRating(), copyItem.getCreationDate());
     }
 
     public Item() { }
 
-    public long getId() {
-        return id;
+    public ItemId getItemId() {
+        return itemId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setItemId(ItemId itemId) {
+        this.itemId = itemId;
+    }
+
+    public UserId getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UserId userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -57,14 +67,6 @@ public class Item {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 
     public Rating getRating() {

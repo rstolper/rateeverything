@@ -1,12 +1,7 @@
 package com.romanstolper.rateeverything.user.domain;
 
-import java.util.UUID;
-
-/**
- * Created by roman on 11/14/2015.
- */
 public class User {
-    private UUID id;
+    private UserId id;
     private String username;
     private String email;
 
@@ -14,17 +9,17 @@ public class User {
 
     }
 
-    public User(UUID id, String username, String email) {
+    public User(UserId id, String username, String email) {
         this.id = id;
         this.username = username;
         this.email = email;
     }
 
-    public UUID getId() {
+    public UserId getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(UserId id) {
         this.id = id;
     }
 

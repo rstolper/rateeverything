@@ -27,7 +27,7 @@ public class Main {
     public static HttpServer startServer() {
         // create a resource config that scans for JAX-RS resources and providers
         // in com.romanstolper.rateeverything package
-        final ResourceConfig rc = new ResourceConfig().packages("com/romanstolper/rateeverything");
+        final ResourceConfig rc = new ResourceConfig().packages("com.romanstolper.rateeverything.web");
         rc.register(JacksonFeature.class);
 
         //Injector inject = Guice.createInjector(new ItemModule());
@@ -55,16 +55,10 @@ public class Main {
                 , BASE_URI));
         //server.wait();
         System.in.read(); // just run it forever till the process dies
-        System.in.read(); // just run it forever till the process dies
         System.out.println("read two lines of input");
         while(true) {
             Thread.sleep(1000000);
         }
-        //System.out.println("finished waiting, shutting down server");
-        //server.shutdown();
-//        while (true) {
-//            Thread.sleep(100000);
-//        }
     }
 }
 

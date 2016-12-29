@@ -1,19 +1,21 @@
 package com.romanstolper.rateeverything.item.persistence;
 
 import com.romanstolper.rateeverything.item.domain.Item;
+import com.romanstolper.rateeverything.item.domain.ItemId;
+import com.romanstolper.rateeverything.user.domain.UserId;
 
 import java.util.Collection;
 
 public interface ItemPersistence {
-    Item selectItem(long itemId);
+    Item getItem(UserId userId, ItemId itemId);
 
-    Collection<Item> selectItems();
+    Collection<Item> getAllItems();
 
-    Collection<Item> selectItemsByOwner(String owner);
+    Collection<Item> getItemsForUser(UserId userId);
 
     Item insertItem(Item item);
 
     Item updateItem(Item item);
 
-    Item deleteItem(long itemId);
+    Item deleteItem(UserId userId, ItemId itemId);
 }

@@ -12,7 +12,7 @@
         $scope.newItemSearchByCategory = {};
         // TODO: custom watch expression on allItems to refresh this list via refreshActiveSearch()
         $scope.searchResultItems = {}; // the active listing of items to display
-        $scope.userName = "";
+        $scope.userId = "";
         $scope.searchString = "";
 
         $scope.isSearchActive = false;
@@ -51,8 +51,8 @@
             }
             else {
                 // login
-                if ($scope.userName && $scope.userName.trim().length > 0) {
-                    $scope.loggedInUser = $scope.userName;
+                if ($scope.userId && $scope.userId.trim().length > 0) {
+                    $scope.loggedInUser = $scope.userId;
                 }
 
                 // find all items by username
@@ -74,8 +74,7 @@
             if (!$scope.loggedInUser || !$scope.newItem.category || !$scope.newItem.name || !$scope.newItem.rating)
                 return;
 
-            $scope.newItem.owner = $scope.loggedInUser
-            $scope.dao.insertItem($scope.newItem, function (item) {
+            $scope.dao.insertItem($scope.loggedInUser, $scope.newItem, function (item) {
                 newItemHandler(item);
                 $scope.newItem.name = "";
                 $scope.newItem.rating = "";
@@ -96,10 +95,10 @@
         }
 
         $scope.deleteItem = function (item) {
-            var itemId = item.id;
-            $scope.dao.deleteItem(itemId, function () {
+            var itemId = item.itemId;
+            $scope.dao.deleteItem($scope.loggedInUser, itemId, function () {
                 delete $scope.allItems[itemId];
-                lunrService.removeItemFromLunr({id: itemId});
+                lunrService.removeItemFromLunr({itemId: itemId});
                 //$scope.newItem = item; // for ease of readding
                 refreshActiveSearch();
                 // TODO: be more intelligent about knowing if addItem modal is open
@@ -126,7 +125,7 @@
             {
                 var results = {};
                 lunrService.findItems($scope.addItemSearchString, $scope.allItems).forEach(function(item) {
-                    results[item.id] = item;
+                    results[item.itemId] = item;
                 });
                 $scope.newItemSearchByCategory = _.groupBy(results, 'category');
             }
@@ -145,7 +144,7 @@
         }
 
         function newItemHandler(item) {
-            $scope.allItems[item.id] = item
+            $scope.allItems[item.itemId] = item
             lunrService.addItemToLunr(item)
         }
 
@@ -155,7 +154,7 @@
             {
                 $scope.searchResultItems = {};
                 lunrService.findItems($scope.searchString, $scope.allItems).forEach(function(item) {
-                    $scope.searchResultItems[item.id] = item;
+                    $scope.searchResultItems[item.itemId] = item;
                 });
             }
             else

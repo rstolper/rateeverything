@@ -1,11 +1,11 @@
-package com.romanstolper.rateeverything.startup;
+package com.romanstolper.rateeverything.util;
 
 import org.h2.tools.DeleteDbFiles;
 
 import java.sql.*;
 
 /**
- * Created by roman on 1/18/2015.
+ * Utility to make the initial H2 database. Cannot run the server before running this.
  */
 public class SetupH2Database {
 
@@ -21,9 +21,9 @@ public class SetupH2Database {
         Class.forName("org.h2.Driver");
         Connection connection = DriverManager.getConnection(dbUrl);
         Statement statement = connection.createStatement();
-        statement.execute("create table Items(id long primary key, name varchar(255), category varchar(255), owner varchar(255), rating int, creationDate Timestamp)");
-        statement.execute("create table Users(id varchar(255) primary key)");
-        statement.execute("insert into Items values(1, 'Hello', 'nocat', 'roman', 1, '2014-01-01')");
+        statement.execute("create table Items(itemId varchar(128) primary key, userId varchar(128), name varchar(128), category varchar(255), rating int, creationDate Timestamp)");
+//        statement.execute("create table Users(userId varchar(128) primary key)");
+        statement.execute("insert into Items values('1', 'Hello', 'nocat', 'roman', 1, '2014-01-01')");
         ResultSet rs;
         rs = statement.executeQuery("select * from Items");
         while (rs.next()) {
