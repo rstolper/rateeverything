@@ -3,7 +3,6 @@ package com.romanstolper.rateeverything.item.external.dto;
 import com.romanstolper.rateeverything.item.domain.Item;
 
 import java.net.URI;
-import java.util.Date;
 
 /**
  * Item object for serialized transfer
@@ -25,7 +24,7 @@ public class ItemDTO {
         this.setName(item.getName());
         this.setCategory(item.getCategory());
         this.setRating(item.getRating().getDisplayText());
-        this.setCreationDate(item.getCreationDate().getTime());
+        this.setCreationDate(item.getCreationDate().toEpochMilli());
     }
 
     public URI getUrl() {

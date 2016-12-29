@@ -1,7 +1,6 @@
 package com.romanstolper.rateeverything.web;
 
-import com.romanstolper.rateeverything.item.external.ItemsResource;
-import com.romanstolper.rateeverything.item.persistence.H2ItemPersistence;
+import com.romanstolper.rateeverything.item.persistence.DynamoDbItemPersistence;
 import com.romanstolper.rateeverything.item.service.ItemService;
 import com.romanstolper.rateeverything.item.service.ItemServiceImpl;
 import com.romanstolper.rateeverything.user.external.UsersResource;
@@ -18,7 +17,6 @@ import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Path("api/v1")
 @Produces(MediaType.APPLICATION_JSON)
@@ -26,7 +24,8 @@ import java.util.Set;
 public class RootResource {
 
     private ItemService itemService = new ItemServiceImpl(
-            new H2ItemPersistence(SetupH2Database.dbUrl)
+//            new H2ItemPersistence(SetupH2Database.dbUrl)
+            new DynamoDbItemPersistence()
     );
     private UserService userService = new UserServiceImpl(
             new H2UserPersistence(SetupH2Database.dbUrl)

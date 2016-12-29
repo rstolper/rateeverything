@@ -4,8 +4,8 @@ import com.romanstolper.rateeverything.item.domain.Item;
 import com.romanstolper.rateeverything.item.domain.ItemId;
 import com.romanstolper.rateeverything.user.domain.UserId;
 
+import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * In-memory storage
@@ -40,7 +40,7 @@ public class InMemoryItemPersistence implements ItemPersistence {
     @Override
     public Item insertItem(Item item) {
         Item newItem = new Item(ItemIdGen.newId(), item);
-        newItem.setCreationDate(new Date());
+        newItem.setCreationDate(Instant.now());
         items.putIfAbsent(item.getUserId(), new HashMap<>());
         items.get(item.getUserId()).put(newItem.getItemId(), item);
         return newItem;

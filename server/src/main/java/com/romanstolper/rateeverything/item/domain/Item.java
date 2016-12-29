@@ -2,7 +2,7 @@ package com.romanstolper.rateeverything.item.domain;
 
 import com.romanstolper.rateeverything.user.domain.UserId;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * A RateEverything Item
@@ -13,7 +13,7 @@ public class Item {
     private String name;
     private String category;
     private Rating rating;
-    private Date creationDate;
+    private Instant creationDate;
 
     public static final Item DEFAULT = new Item(new ItemId("0"), new UserId("NOBODY"),"DEFAULT", "DEFAULT", Rating.UNRATED);
 
@@ -25,7 +25,7 @@ public class Item {
         this.rating = rating;
     }
 
-    public Item(ItemId itemId, UserId userId, String name, String category, Rating rating, Date creationDate) {
+    public Item(ItemId itemId, UserId userId, String name, String category, Rating rating, Instant creationDate) {
         this(itemId, userId, name, category, rating);
         this.creationDate = creationDate;
     }
@@ -77,11 +77,11 @@ public class Item {
         this.rating = rating;
     }
 
-    public Date getCreationDate() {
+    public Instant getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(Instant creationDate) {
         this.creationDate = creationDate;
     }
 }

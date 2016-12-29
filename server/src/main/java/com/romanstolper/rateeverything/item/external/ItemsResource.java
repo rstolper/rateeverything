@@ -4,15 +4,13 @@ import com.romanstolper.rateeverything.item.domain.ItemId;
 import com.romanstolper.rateeverything.item.domain.Rating;
 import com.romanstolper.rateeverything.item.external.dto.ItemCreateDTO;
 import com.romanstolper.rateeverything.item.external.dto.ItemDTO;
-import com.romanstolper.rateeverything.item.persistence.H2ItemPersistence;
 import com.romanstolper.rateeverything.item.service.ItemService;
 import com.romanstolper.rateeverything.item.domain.Item;
-import com.romanstolper.rateeverything.item.service.ItemServiceImpl;
 import com.romanstolper.rateeverything.user.domain.UserId;
-import com.romanstolper.rateeverything.util.SetupH2Database;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -73,7 +71,7 @@ public class ItemsResource {
         if (itemRating == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Invalid rating: " + newItem.getRating()).build();
         }
-        Item createdItem = itemService.createItem(new Item(null, userId, newItem.getName(), newItem.getCategory(), itemRating));
+        Item createdItem = itemService.createItem(new Item(null, userId, newItem.getName(), newItem.getCategory(), itemRating, Instant.now()));
         ItemDTO itemDTO = new ItemDTO(createdItem);
         itemDTO.setUrl(uriInfo.getAbsolutePathBuilder().path("{itemId}").build(createdItem.getItemId()));
         return Response.created(itemDTO.getUrl()).entity(itemDTO).build();

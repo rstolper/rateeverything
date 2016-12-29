@@ -3,6 +3,7 @@ package com.romanstolper.rateeverything.item.persistence;
 import com.romanstolper.rateeverything.item.domain.Item;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -70,7 +71,7 @@ public class H2ItemPersistence implements ItemPersistence {
             updateItemStmt.setString(paramIdx++, item.getName());
             updateItemStmt.setString(paramIdx++, item.getCategory());
             updateItemStmt.setInt(paramIdx++, item.getRating().getNumericValue());
-            updateItemStmt.setTimestamp(paramIdx++, dateToTimestamp(item.getCreationDate()));
+            updateItemStmt.setTimestamp(paramIdx++, new Timestamp(item.getCreationDate().toEpochMilli()));
             updateItemStmt.setString(paramIdx++, item.getUserId().getValue());
             updateItemStmt.setString(paramIdx++, item.getItemId().getValue());
             updateItemStmt.execute();
@@ -94,7 +95,7 @@ public class H2ItemPersistence implements ItemPersistence {
             insertItemStmt.setString(paramIdx++, item.getName());
             insertItemStmt.setString(paramIdx++, item.getCategory());
             insertItemStmt.setInt(paramIdx++, item.getRating().getNumericValue());
-            insertItemStmt.setTimestamp(paramIdx++, getCurrentTimestamp());
+            insertItemStmt.setTimestamp(paramIdx++, new Timestamp(Instant.now().toEpochMilli()));
             insertItemStmt.execute();
             Item insertedItem = getItem(item.getUserId(), newItemId);
             return insertedItem;
@@ -102,14 +103,6 @@ public class H2ItemPersistence implements ItemPersistence {
             e.printStackTrace();
             throw new RuntimeException("Item insert failed: " + e.getMessage());
         }
-    }
-
-    private Timestamp getCurrentTimestamp() {
-        return dateToTimestamp(new java.util.Date());
-    }
-
-    private Timestamp dateToTimestamp(java.util.Date date) {
-        return new Timestamp(date.getTime());
     }
 
     @Override
@@ -171,7 +164,7 @@ public class H2ItemPersistence implements ItemPersistence {
             int rating = resultSet.getInt(paramIdx++);
             Timestamp creationDate = resultSet.getTimestamp(paramIdx++);
 
-            items.add(new Item(new ItemId(itemId), new UserId(userId), name, category, Rating.valueOfNumericValue(rating), new java.util.Date(creationDate.getTime())));
+            items.add(new Item(new ItemId(itemId), new UserId(userId), name, category, Rating.valueOfNumericValue(rating), creationDate.toInstant()));
         }
         return items;
     }
