@@ -1,6 +1,9 @@
 export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
 export PATH=$JAVA_HOME/bin:$PATH
 
+# source aws credentials as env vars
+. $OPENSHIFT_HOMEDIR/app-root/data/aws_credentials.sh
+
 cd $OPENSHIFT_REPO_DIR
 declare -x PORT=$OPENSHIFT_DIY_PORT
 declare -x HOST=$OPENSHIFT_DIY_IP
