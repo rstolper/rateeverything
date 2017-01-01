@@ -1,5 +1,8 @@
 package com.romanstolper.rateeverything.user.service;
 
+import com.romanstolper.rateeverything.user.domain.GoogleId;
+import com.romanstolper.rateeverything.user.domain.User;
+import com.romanstolper.rateeverything.user.domain.UserId;
 import com.romanstolper.rateeverything.user.persistence.UserPersistence;
 
 import javax.inject.Singleton;
@@ -14,5 +17,20 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl(UserPersistence userPersistence) {
         this.userPersistence = userPersistence;
+    }
+
+    @Override
+    public User getUser(UserId userId) {
+        return userPersistence.getUser(userId);
+    }
+
+    @Override
+    public User getUserViaGoogle(GoogleId googleId) {
+        return userPersistence.getUserByGoogleId(googleId);
+    }
+
+    @Override
+    public User createUser(User newUser) {
+        return userPersistence.insertUser(newUser);
     }
 }

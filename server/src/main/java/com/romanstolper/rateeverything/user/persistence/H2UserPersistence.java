@@ -2,6 +2,9 @@ package com.romanstolper.rateeverything.user.persistence;
 
 import com.romanstolper.rateeverything.item.domain.Item;
 import com.romanstolper.rateeverything.item.domain.Rating;
+import com.romanstolper.rateeverything.user.domain.GoogleId;
+import com.romanstolper.rateeverything.user.domain.User;
+import com.romanstolper.rateeverything.user.domain.UserId;
 
 import javax.inject.Singleton;
 import java.sql.*;
@@ -38,4 +41,23 @@ public class H2UserPersistence implements UserPersistence {
         return new Timestamp(date.getTime());
     }
 
+    @Override
+    public User getUser(UserId userId) {
+        return null;
+    }
+
+    @Override
+    public Collection<User> getAllUsers() {
+        return null;
+    }
+
+    @Override
+    public User insertUser(User newUser) {
+        return null;
+    }
+
+    @Override
+    public User getUserByGoogleId(GoogleId googleId) {
+        return null;
+    }
 }

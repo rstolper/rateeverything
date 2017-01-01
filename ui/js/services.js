@@ -4,37 +4,70 @@
 
     app.factory('restDao', function(cloneItem, $http) {
         return {
-            insertItem: function(userId, item, addedItemCallback)
+            insertItem: function(googleIdToken, item, addedItemCallback)
             {
-                $http.post('/app/api/v1/users/'+userId+'/items', item).
-                    success(function(data, status, headers, config) {
-                        addedItemCallback(data);
-                    }).
-                    error(function(data, status, headers, config) {
-                        alert("item post failed :(");
-                    });
+                var req = {
+                    method: 'POST',
+                    url: '/app/api/v1/user/items',
+                    headers: {
+                        'AuthToken': googleIdToken
+                    },
+                    data: item
+                }
+                $http(req).then(addedItemCallback, function(response) {
+                    alert("item post failed :(");
+                });
             },
 
-            getAllItems: function (userId, itemsReceivedCallback)
+            getAllItems: function (googleIdToken, itemsReceivedCallback)
             {
-                $http.get('/app/api/v1/users/'+userId+'/items').
-                    success(function(data, status, headers, config) {
-                        itemsReceivedCallback(data);
-                    }).
-                    error(function(data, status, headers, config) {
-                        alert("get all items failed :(");
-                    });
+                var req = {
+                    method: 'GET',
+                    url: '/app/api/v1/user/items',
+                    headers: {
+                        'AuthToken': googleIdToken
+                    }
+                }
+                $http(req).then(itemsReceivedCallback, function(response) {
+                    alert("get all items failed :(");
+                })
             },
 
-            deleteItem: function (userId, itemId, itemDeletedCallback)
+            deleteItem: function (googleIdToken, itemId, itemDeletedCallback)
             {
-                $http.delete('/app/api/v1/users/'+userId+'/items/'+itemId).
-                    success(function(data, status, headers, config) {
-                        itemDeletedCallback();
-                    }).
-                    error(function(data, status, headers, config) {
-                        alert("delete item failed :(");
-                    });
+                var req = {
+                    method: 'DELETE',
+                    url: '/app/api/v1/user/items/' + itemId,
+                    headers: {
+                        'AuthToken': googleIdToken
+                    }
+                }
+                $http(req).then(itemDeletedCallback, function(response) {
+                    alert("delete item failed :(");
+                });
+            },
+
+            getUserViaGoogle: function (googleIdToken, userFoundCallback, userNotFoundCallback)
+            {
+                var req = {
+                    method: 'GET',
+                    url: '/app/api/v1/users/viaGoogleAuthToken',
+                    headers: {
+                        'AuthToken': googleIdToken
+                    }
+                }
+                $http(req).then(userFoundCallback, userNotFoundCallback);
+            },
+
+            createUserViaGoogle: function (googleIdToken, successCallback, errorCallback) {
+                var req = {
+                    method: 'POST',
+                    url: '/app/api/v1/users/viaGoogleAuthToken',
+                    headers: {
+                        'AuthToken': googleIdToken
+                    }
+                }
+                $http(req).then(successCallback, errorCallback);
             }
         }
     });

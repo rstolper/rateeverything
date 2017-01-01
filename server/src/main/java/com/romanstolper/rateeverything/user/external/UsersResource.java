@@ -6,10 +6,7 @@ import com.romanstolper.rateeverything.item.service.ItemService;
 import com.romanstolper.rateeverything.user.domain.UserId;
 import com.romanstolper.rateeverything.user.service.UserService;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 /**
@@ -42,5 +39,10 @@ public class UsersResource {
     @Path("{userId}")
     public UserResource getUser(@PathParam("userId") String userId){
         return new UserResource(new UserId(userId), userService, itemService, uriInfo, request);
+    }
+
+    @Path("viaGoogleAuthToken")
+    public GoogleAuthUserResource viaGoogleAuthToken(@HeaderParam("AuthToken") String googleIdToken) {
+        return new GoogleAuthUserResource(googleIdToken, userService, uriInfo, request);
     }
 }

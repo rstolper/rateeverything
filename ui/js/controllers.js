@@ -35,46 +35,96 @@
             return ($scope.loggedInUser && $scope.loggedInUser.trim().length > 0)
         };
 
-        $scope.login = function () {
-            if ($scope.isLoggedIn()) {
-                // logout
-                $scope.loggedInUser = "";
-                lunrService.dropItemsIndex();
-                $scope.allItems = {};
-                $scope.searchResultItems = {};
-                $scope.newItemSearchByCategory = {};
-                $scope.itemsByCategory = {};
-                $scope.newItem = {};
-                $scope.searchString = "";
-                $scope.isSearchActive = false;
-                $scope.$broadcast('loggedOut');
-            }
-            else {
-                // login
-                if ($scope.userId && $scope.userId.trim().length > 0) {
-                    $scope.loggedInUser = $scope.userId;
-                }
+        function onGoogleSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            // after signed in
+            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail());
 
-                // find all items by username
-                $scope.dao.getAllItems($scope.loggedInUser, function (receivedItems) {
-                    $scope.allItems = {};
-                    $scope.searchResultItems = {};
-                    lunrService.dropItemsIndex();
-                    for (var key in receivedItems) {
-                        newItemHandler(receivedItems[key]);
-                    }
-                    refreshActiveSearch();
-                    $scope.$broadcast('focusSearch');
+            var googleIdToken = googleUser.getAuthResponse().id_token;
+            $scope.googleIdToken = googleIdToken;
+            $scope.authProvider = 'Google';
+
+            var userIdFromServer = "";
+
+            $scope.$digest;
+
+            // get user
+            $scope.dao.getUserViaGoogle(googleIdToken, function (response) {
+                console.log('user found: ' + JSON.stringify(response.data));
+                userIdFromServer = response.data.userId.value;
+                $scope.completeLogin(userIdFromServer);
+            },
+            function() {
+                console.log('user not found with id token: ' + profile.getId());
+                // create new user
+                $scope.dao.createUserViaGoogle(googleIdToken, function(response) {
+                    console.log("Created user: " + JSON.stringify(response.data));
+                    userIdFromServer = response.data.userId.value;
+                    $scope.completeLogin(userIdFromServer);
                 });
+            });
+        }
+        window.onGoogleSignIn = onGoogleSignIn;
+
+        $scope.loginDebug = function () {
+            if ($scope.userId && $scope.userId.trim().length > 0) {
+                $scope.authProvider = 'Debug';
+                $scope.completeLogin($scope.userId);
             }
         };
+
+        $scope.completeLogin = function (userId) {
+            $scope.loggedInUser = userId;
+
+            console.log("Scope.loggedInUser: " + $scope.loggedInUser);
+
+            // find all items by username
+            $scope.dao.getAllItems($scope.googleIdToken, function (response) {
+                var receivedItems = response.data;
+                $scope.allItems = {};
+                $scope.searchResultItems = {};
+                lunrService.dropItemsIndex();
+                for (var key in receivedItems) {
+                    newItemHandler(receivedItems[key]);
+                }
+                refreshActiveSearch();
+                $scope.$broadcast('focusSearch');
+            });
+        }
+
+        $scope.logout = function () {
+            $scope.loggedInUser = "";
+            $scope.authProvider = "";
+            lunrService.dropItemsIndex();
+            $scope.allItems = {};
+            $scope.searchResultItems = {};
+            $scope.newItemSearchByCategory = {};
+            $scope.itemsByCategory = {};
+            $scope.newItem = {};
+            $scope.searchString = "";
+            $scope.isSearchActive = false;
+            $scope.$broadcast('loggedOut');
+        }
+
+        $scope.googleSignOut = function () {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+                console.log('User signed out.');
+            });
+
+            $scope.logout();
+        }
 
         $scope.addNewItem = function () {
             // exit if anything is empty
             if (!$scope.loggedInUser || !$scope.newItem.category || !$scope.newItem.name || !$scope.newItem.rating)
                 return;
 
-            $scope.dao.insertItem($scope.loggedInUser, $scope.newItem, function (item) {
+            $scope.dao.insertItem($scope.googleIdToken, $scope.newItem, function (response) {
+                var item = response.data;
                 newItemHandler(item);
                 $scope.newItem.name = "";
                 $scope.newItem.rating = "";
@@ -96,7 +146,7 @@
 
         $scope.deleteItem = function (item) {
             var itemId = item.itemId;
-            $scope.dao.deleteItem($scope.loggedInUser, itemId, function () {
+            $scope.dao.deleteItem($scope.googleIdToken, itemId, function (response) {
                 delete $scope.allItems[itemId];
                 lunrService.removeItemFromLunr({itemId: itemId});
                 //$scope.newItem = item; // for ease of readding

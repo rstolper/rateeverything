@@ -67,6 +67,13 @@
             <artifactId>aws-java-sdk-dynamodb</artifactId>
         </dependency>
 
+        <!-- Google APIs -->
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client-servlet</artifactId>
+            <version>1.22.0</version>
+        </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>util</artifactId>

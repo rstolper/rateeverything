@@ -39,13 +39,13 @@ public class UserResource {
         this.request = request;
     }
 
-    @GET
-    public Response getUser() {
-        return Response.ok().entity(userId.getValue()).build();
-    }
-
     @Path("items")
     public ItemsResource getItems() {
         return new ItemsResource(userId, itemService, uriInfo, request);
+    }
+
+    @GET
+    public Response getUser() {
+        return Response.ok(userService.getUser(userId)).build();
     }
 }
