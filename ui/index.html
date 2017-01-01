@@ -47,12 +47,9 @@
                     <li class="active"><a href="index.html">Home</a></li>
                     <li><a href="about.html">About</a></li>
                     </ul>
-                    <form ng-show="isLoggedIn()" class="navbar-form navbar-right" role="form" ng-submit="logout()">
+                    <form ng-show="isLoggedIn()" class="navbar-form navbar-right" role="form" ng-submit="googleSignOut()">
                         <button type="submit" class="btn btn-primary" data-toggle="collapse" data-target="#navBar">Logout</button>
                     </form>
-                    <ul class="nav navbar-right">
-                        <li><a href="#" ng-click="googleSignOut()">Sign out google</a></li>
-                    </ul>
                 </div><!--/.nav-collapse -->
             </div>
         </div>
@@ -60,11 +57,7 @@
         <div class="container">
             <div class="starter-template">
                 <div ng-hide="isLoggedIn()">
-                    <form class="form-inline" role="form" name="loginForm" ng-submit="loginDebug()" />
-                        <p>There is no security, pick any username you want and stick with it.</p>
-                        <input type="text" class="form-control" placeholder="Username" ng-model="userId" ng-disabled="isLoggedIn()" autofocus  focus-on="loggedOut" />
-                        <button type="submit" class="btn btn-primary" >Login</button>
-                    </form>
+                    <p>Welcome to Rate Everything! Please use Google to login / create an account.</p>
                     <div class="g-signin2" data-onsuccess="onGoogleSignIn"></div>
                 </div>
                 <div ng-show="isLoggedIn()">
