@@ -3,11 +3,17 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.stolpr.rateeverything</groupId>
-    <artifactId>rateeverything-rest</artifactId>
+    <groupId>com.romanstolper.rateeverything</groupId>
+    <artifactId>server</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>rateeverything-rest</name>
+    <name>server</name>
+
+    <parent>
+        <groupId>com.romanstolper.rateeverything</groupId>
+        <artifactId>rateeverything</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
     <dependencyManagement>
         <dependencies>
@@ -48,12 +54,31 @@
             <version>3.0</version>
         </dependency>
 
+        <!-- H2 -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.3.176</version>
         </dependency>
 
+        <!-- DynamoDB -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-dynamodb</artifactId>
+        </dependency>
+
+        <!-- Google APIs -->
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client-servlet</artifactId>
+            <version>1.22.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -65,8 +90,8 @@
                 <version>2.5.1</version>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -93,7 +118,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>rateeverything.startup.Main</mainClass>
+                    <mainClass>com.romanstolper.rateeverything.startup.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -4,37 +4,70 @@
 
     app.factory('restDao', function(cloneItem, $http) {
         return {
-            insertItem: function(item, addedItemCallback)
+            insertItem: function(googleIdToken, item, addedItemCallback)
             {
-                $http.post('/app/api/v1/items', item).
-                    success(function(data, status, headers, config) {
-                        addedItemCallback(data);
-                    }).
-                    error(function(data, status, headers, config) {
-                        alert("item post failed :(");
-                    });
+                var req = {
+                    method: 'POST',
+                    url: '/app/api/v1/user/items',
+                    headers: {
+                        'AuthToken': googleIdToken
+                    },
+                    data: item
+                }
+                $http(req).then(addedItemCallback, function(response) {
+                    alert("item post failed :(");
+                });
             },
 
-            getAllItems: function (userName, itemsReceivedCallback)
+            getAllItems: function (googleIdToken, itemsReceivedCallback)
             {
-                $http.get('/app/api/v1/items?owner='+userName).
-                    success(function(data, status, headers, config) {
-                        itemsReceivedCallback(data);
-                    }).
-                    error(function(data, status, headers, config) {
-                        alert("get all items failed :(");
-                    });
+                var req = {
+                    method: 'GET',
+                    url: '/app/api/v1/user/items',
+                    headers: {
+                        'AuthToken': googleIdToken
+                    }
+                }
+                $http(req).then(itemsReceivedCallback, function(response) {
+                    alert("get all items failed :(");
+                })
             },
 
-            deleteItem: function (itemId, itemDeletedCallback)
+            deleteItem: function (googleIdToken, itemId, itemDeletedCallback)
             {
-                $http.delete('/app/api/v1/items/' + itemId).
-                    success(function(data, status, headers, config) {
-                        itemDeletedCallback();
-                    }).
-                    error(function(data, status, headers, config) {
-                        alert("delete item failed :(");
-                    });
+                var req = {
+                    method: 'DELETE',
+                    url: '/app/api/v1/user/items/' + itemId,
+                    headers: {
+                        'AuthToken': googleIdToken
+                    }
+                }
+                $http(req).then(itemDeletedCallback, function(response) {
+                    alert("delete item failed :(");
+                });
+            },
+
+            getUserViaGoogle: function (googleIdToken, userFoundCallback, userNotFoundCallback)
+            {
+                var req = {
+                    method: 'GET',
+                    url: '/app/api/v1/users/viaGoogleAuthToken',
+                    headers: {
+                        'AuthToken': googleIdToken
+                    }
+                }
+                $http(req).then(userFoundCallback, userNotFoundCallback);
+            },
+
+            createUserViaGoogle: function (googleIdToken, successCallback, errorCallback) {
+                var req = {
+                    method: 'POST',
+                    url: '/app/api/v1/users/viaGoogleAuthToken',
+                    headers: {
+                        'AuthToken': googleIdToken
+                    }
+                }
+                $http(req).then(successCallback, errorCallback);
             }
         }
     });
@@ -42,16 +75,16 @@
     app.factory('dummyDao', function(cloneItem) {
         return dummyDao = {
             itemIndex: 1,
-            items: {"0": {category:"test", name:"test", userName:"test", rating:"Yes", id:"0"}},
+            items: {"0": {category:"test", name:"test", userId:"test", rating:"Yes", itemId:"0"}},
             insertItem: function (item, addedItemCallback) {
                 // simulate a new item object..
                 var addedItem = cloneItem(item);
-                addedItem.id = this.itemIndex++;
+                addedItem.itemId = this.itemIndex++;
 
-                this.items[addedItem.id] = addedItem;
+                this.items[addedItem.itemid] = addedItem;
                 addedItemCallback(addedItem);
             },
-            getAllItems: function (userName, itemsReceivedCallback) {
+            getAllItems: function (userId, itemsReceivedCallback) {
                 var dao = this;
                 var promise = new Promise(function(resolve, reject) {
                     var receivedItems = [];
@@ -61,9 +94,9 @@
                     resolve(receivedItems);
                 }).then(itemsReceivedCallback);
             },
-            deleteItem: function (id, itemDeletedCallback) {
-                delete this.items[id];
-                itemDeletedCallback(id);
+            deleteItem: function (itemId, itemDeletedCallback) {
+                delete this.items[itemId];
+                itemDeletedCallback(itemId);
             }
         };
     });
@@ -71,12 +104,12 @@
     app.factory('cloneItem', function() {
         return function (item) {
             var clonedItem = {
-                owner: item.owner,
                 category: item.category,
                 name: item.name,
                 rating: item.rating,
                 creationDate: item.creationDate,
-                id: this.itemIndex
+                userId: item.userId,
+                itemId: this.itemIndex
             };
 
             return clonedItem;
@@ -92,7 +125,7 @@
             lunrItemsIndex = lunr(function () {
                 this.field('category')
                 this.field('name')
-                this.ref('id')
+                this.ref('itemId')
             })
         }
 
