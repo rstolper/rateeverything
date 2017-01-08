@@ -11,6 +11,9 @@ import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import com.romanstolper.rateeverything.user.domain.GoogleId;
+import com.romanstolper.rateeverything.user.domain.User;
+import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -29,21 +32,19 @@ public class DynamoDbUserPersistenceIntegrationTest {
     DynamoDB dynamoDB = new DynamoDB(client);
     String tableName = "Users";
 
-    @BeforeClass
-    public void beforeClass() throws Exception {
-//        client = new AmazonDynamoDBClient();
-//        client.withEndpoint("http://localhost:8000");
-//        dynamoDB = new DynamoDB(client);
+    private DynamoDbUserPersistence userPersistence = new DynamoDbUserPersistence(client);
 
+    @Before
+    public void setUp() throws Exception {
         System.out.println("Deleting Users if it exists..");
         TableUtils.deleteTableIfExists(client, new DeleteTableRequest().withTableName(tableName));
 
-        ArrayList<KeySchemaElement> keySchema = new ArrayList<KeySchemaElement>();
+        ArrayList<KeySchemaElement> keySchema = new ArrayList<>();
         keySchema.add(new KeySchemaElement()
                 .withAttributeName("UserId")
                 .withKeyType(KeyType.HASH));
 
-        ArrayList<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
+        ArrayList<AttributeDefinition> attributeDefinitions = new ArrayList<>();
         attributeDefinitions.add(new AttributeDefinition()
                 .withAttributeName("UserId")
                 .withAttributeType("S"));
@@ -60,15 +61,10 @@ public class DynamoDbUserPersistenceIntegrationTest {
         System.out.println("Issuing CreateTable request for " + tableName);
         Table table = dynamoDB.createTable(request);
 
-        System.out.println("Waiting for " + tableName + " to be created...this may take a while...");
+//        System.out.println("Waiting for " + tableName + " to be created");
         table.waitForActive();
 
-        getTableInformation();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
+//        getTableInformation();
     }
 
     @Test
@@ -83,17 +79,52 @@ public class DynamoDbUserPersistenceIntegrationTest {
 
     @Test
     public void insertUser() throws Exception {
+        User user1 = new User();
+        user1.setUserId(UserIdGen.newId());
+        user1.setGoogleId(new GoogleId("123"));
+        userPersistence.insertUser(user1);
 
+        User firstUser = userPersistence.getUser(user1.getUserId());
+        assertEquals(firstUser.getGoogleId().getValue(), user1.getGoogleId().getValue());
     }
 
     @Test
     public void updateUser() throws Exception {
+        User user1 = new User();
+        user1.setUserId(UserIdGen.newId());
+        user1.setGoogleId(new GoogleId("123"));
 
+        User user2 = new User();
+        user2.setUserId(UserIdGen.newId());
+        user2.setGoogleId(new GoogleId("456"));
+
+        userPersistence.insertUser(user1);
+        userPersistence.insertUser(user2);
+
+        user1.setGoogleId(new GoogleId("789"));
+
+        userPersistence.updateUser(user1);
+
+        User firstUser = userPersistence.getUser(user1.getUserId());
+
+        assertEquals("789", firstUser.getGoogleId().getValue());
     }
 
     @Test
     public void getUserByGoogleId() throws Exception {
+        User user1 = new User();
+        user1.setUserId(UserIdGen.newId());
+        user1.setGoogleId(new GoogleId("123"));
 
+        User user2 = new User();
+        user2.setUserId(UserIdGen.newId());
+        user2.setGoogleId(new GoogleId("456"));
+
+        userPersistence.insertUser(user1);
+        userPersistence.insertUser(user2);
+
+        User firstUser = userPersistence.getUserByGoogleId(new GoogleId("123"));
+        assertEquals(firstUser.getUserId().getValue(), user1.getUserId().getValue());
     }
 
     @Test
@@ -101,18 +132,18 @@ public class DynamoDbUserPersistenceIntegrationTest {
 
     }
 
-    private void getTableInformation() {
-
-        System.out.println("Describing " + tableName);
-
-        TableDescription tableDescription = dynamoDB.getTable(tableName).describe();
-        System.out.format("Name: %s:\n" + "Status: %s \n"
-                        + "Provisioned Throughput (read capacity units/sec): %d \n"
-                        + "Provisioned Throughput (write capacity units/sec): %d \n",
-                tableDescription.getTableName(),
-                tableDescription.getTableStatus(),
-                tableDescription.getProvisionedThroughput().getReadCapacityUnits(),
-                tableDescription.getProvisionedThroughput().getWriteCapacityUnits());
-    }
+//    private void getTableInformation() {
+//
+//        System.out.println("Describing " + tableName);
+//
+//        TableDescription tableDescription = dynamoDB.getTable(tableName).describe();
+//        System.out.format("Name: %s:\n" + "Status: %s \n"
+//                        + "Provisioned Throughput (read capacity units/sec): %d \n"
+//                        + "Provisioned Throughput (write capacity units/sec): %d \n",
+//                tableDescription.getTableName(),
+//                tableDescription.getTableStatus(),
+//                tableDescription.getProvisionedThroughput().getReadCapacityUnits(),
+//                tableDescription.getProvisionedThroughput().getWriteCapacityUnits());
+//    }
 
 }

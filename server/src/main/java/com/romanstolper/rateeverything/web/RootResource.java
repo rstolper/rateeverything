@@ -1,5 +1,6 @@
 package com.romanstolper.rateeverything.web;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.romanstolper.rateeverything.item.persistence.DynamoDbItemPersistence;
 import com.romanstolper.rateeverything.item.service.ItemService;
 import com.romanstolper.rateeverything.item.service.ItemServiceImpl;
@@ -38,10 +39,10 @@ import static java.time.temporal.ChronoUnit.HOURS;
 public class RootResource {
 
     private static ItemService itemService = new ItemServiceImpl(
-            new DynamoDbItemPersistence()
+            new DynamoDbItemPersistence(new AmazonDynamoDBClient())
     );
     private static UserService userService = new UserServiceImpl(
-            new DynamoDbUserPersistence()
+            new DynamoDbUserPersistence(new AmazonDynamoDBClient())
     );
 
     private GoogleAuthService googleAuthService = new GoogleAuthService();

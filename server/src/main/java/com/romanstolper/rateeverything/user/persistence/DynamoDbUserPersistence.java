@@ -1,6 +1,8 @@
 package com.romanstolper.rateeverything.user.persistence;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Index;
 import com.amazonaws.services.dynamodbv2.document.ItemCollection;
@@ -25,6 +27,8 @@ public class DynamoDbUserPersistence implements UserPersistence {
     private final Index byGoogleId;
     private final Index byUsername;
 
+    private final DynamoDBMapper mapper;
+
     public static final String PK_USERID = "UserId";
     public static final String F_GOOGLE_ID = "GoogleId";
     public static final String F_USERNAME = "NativeAuthUsername";
@@ -39,8 +43,9 @@ public class DynamoDbUserPersistence implements UserPersistence {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public DynamoDbUserPersistence() {
-        dynamoDB = new DynamoDB(new AmazonDynamoDBClient());
+    public DynamoDbUserPersistence(AmazonDynamoDB client) {
+        mapper = new DynamoDBMapper(client);
+        dynamoDB = new DynamoDB(client);
         table = dynamoDB.getTable("Users");
         byGoogleId = table.getIndex("GoogleId-index");
         byUsername = table.getIndex("NativeAuthUsername-index");
@@ -49,6 +54,8 @@ public class DynamoDbUserPersistence implements UserPersistence {
     @Override
     public User getUser(UserId userId) {
         return mapFromDynamo(table.getItem(pk(userId)));
+
+//        return mapper.load(User.class, userId);
     }
 
     @Override
@@ -62,6 +69,10 @@ public class DynamoDbUserPersistence implements UserPersistence {
         newUser.setUserId(newUserId);
         table.putItem(mapToDynamo(newUser));
         return newUser;
+
+//        newUser.setUserId(UserIdGen.newId());
+//        mapper.save(newUser);
+//        return newUser;
     }
 
     @Override
@@ -71,6 +82,9 @@ public class DynamoDbUserPersistence implements UserPersistence {
             throw new RuntimeException("UserId cannot be null when updating user");
         }
         table.putItem(mapToDynamo(user));
+
+//        mapper.save(user);
+
         return user;
     }
 

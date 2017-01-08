@@ -5,12 +5,12 @@ import com.romanstolper.rateeverything.user.domain.UserId;
 
 public class DynamoDBUserIdConverter implements DynamoDBTypeConverter<String, UserId> {
     @Override
-    public String convert(UserId userId) {
-        return userId == null ? null : userId.getValue();
+    public String convert(UserId id) {
+        return id == null ? null : id.getValue();
     }
 
     @Override
-    public UserId unconvert(String userIdValue) {
-        return new UserId(userIdValue);
+    public UserId unconvert(String value) {
+        return new UserId(value);
     }
 }

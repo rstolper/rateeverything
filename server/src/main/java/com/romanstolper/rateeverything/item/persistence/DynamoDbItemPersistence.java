@@ -1,6 +1,6 @@
 package com.romanstolper.rateeverything.item.persistence;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.romanstolper.rateeverything.item.domain.Item;
@@ -11,11 +11,9 @@ import java.util.Collection;
 
 public class DynamoDbItemPersistence implements ItemPersistence {
 
-    private final AmazonDynamoDBClient client;
     private final DynamoDBMapper mapper;
 
-    public DynamoDbItemPersistence() {
-        client = new AmazonDynamoDBClient();
+    public DynamoDbItemPersistence(AmazonDynamoDB client) {
         mapper = new DynamoDBMapper(client);
     }
 

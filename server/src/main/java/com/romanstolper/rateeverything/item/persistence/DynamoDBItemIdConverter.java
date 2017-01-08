@@ -5,12 +5,12 @@ import com.romanstolper.rateeverything.item.domain.ItemId;
 
 public class DynamoDBItemIdConverter implements DynamoDBTypeConverter<String, ItemId> {
     @Override
-    public String convert(ItemId itemId) {
-        return itemId == null ? null : itemId.getValue();
+    public String convert(ItemId id) {
+        return id == null ? null : id.getValue();
     }
 
     @Override
-    public ItemId unconvert(String itemIdValue) {
-        return new ItemId(itemIdValue);
+    public ItemId unconvert(String value) {
+        return new ItemId(value);
     }
 }

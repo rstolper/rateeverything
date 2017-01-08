@@ -18,12 +18,27 @@ import java.time.Instant;
  */
 @DynamoDBTable(tableName = "Items")
 public class Item {
+
+    @DynamoDBRangeKey(attributeName = "ItemId")
+    @DynamoDBTypeConverted(converter = DynamoDBItemIdConverter.class)
     private ItemId itemId;
+
+    @DynamoDBHashKey(attributeName = "UserId")
     @DynamoDBTypeConverted(converter = DynamoDBUserIdConverter.class)
     private UserId userId;
+
+    @DynamoDBAttribute(attributeName = "Name")
     private String name;
+
+    @DynamoDBAttribute(attributeName = "Category")
     private String category;
+
+    @DynamoDBAttribute(attributeName = "Rating")
+    @DynamoDBTypeConvertedEnum()
     private Rating rating;
+
+    @DynamoDBAttribute(attributeName = "CreatedDate")
+    @DynamoDBTypeConverted(converter = DynamoDBInstantConverter.class)
     private Instant createdDate;
 
     public static final Item DEFAULT = new Item(new ItemId("0"), new UserId("NOBODY"),"DEFAULT", "DEFAULT", Rating.UNRATED);
@@ -53,56 +68,51 @@ public class Item {
 
     public Item() { }
 
-    @DynamoDBTypeConverted(converter = DynamoDBItemIdConverter.class)
-    @DynamoDBRangeKey(attributeName = "ItemId")
     public ItemId getItemId() {
         return itemId;
     }
+
     public void setItemId(ItemId itemId) {
         this.itemId = itemId;
     }
 
-//    @DynamoDBTypeConverted(converter = DynamoDBUserIdConverter.class)
-    @DynamoDBHashKey(attributeName = "UserId")
     public UserId getUserId() {
         return userId;
     }
-//    @DynamoDBTypeConverted(converter = DynamoDBUserIdConverter.class)
+
     public void setUserId(UserId userId) {
         this.userId = userId;
     }
 
-    @DynamoDBAttribute(attributeName = "Name")
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         System.out.println("Calling setter");
         this.name = name;
     }
 
-    @DynamoDBAttribute(attributeName = "Category")
     public String getCategory() {
         return category;
     }
+
     public void setCategory(String category) {
         this.category = category;
     }
 
-    @DynamoDBAttribute(attributeName = "Rating")
-    @DynamoDBTypeConvertedEnum()
     public Rating getRating() {
         return rating;
     }
+
     public void setRating(Rating rating) {
         this.rating = rating;
     }
 
-    @DynamoDBTypeConverted(converter = DynamoDBInstantConverter.class)
-    @DynamoDBAttribute(attributeName = "CreatedDate")
     public Instant getCreatedDate() {
         return createdDate;
     }
+
     public void setCreatedDate(Instant createdDate) {
         this.createdDate = createdDate;
     }
