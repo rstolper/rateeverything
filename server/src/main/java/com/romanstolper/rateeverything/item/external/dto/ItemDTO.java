@@ -24,7 +24,7 @@ public class ItemDTO {
         this.setName(item.getName());
         this.setCategory(item.getCategory());
         this.setRating(item.getRating().getDisplayText());
-        this.setCreationDate(item.getCreationDate().toEpochMilli());
+        this.setCreationDate(item.getCreatedDate().toEpochMilli());
     }
 
     public URI getUrl() {

@@ -40,7 +40,7 @@ public class InMemoryItemPersistence implements ItemPersistence {
     @Override
     public Item insertItem(Item item) {
         Item newItem = new Item(ItemIdGen.newId(), item);
-        newItem.setCreationDate(Instant.now());
+        newItem.setCreatedDate(Instant.now());
         items.putIfAbsent(item.getUserId(), new HashMap<>());
         items.get(item.getUserId()).put(newItem.getItemId(), item);
         return newItem;
