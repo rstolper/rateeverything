@@ -13,5 +13,7 @@ import java.util.Collection;
 public interface UserService {
     User getUser(UserId userId);
     User getUserViaGoogle(GoogleId googleId);
+    User getUserViaUsername(String username);
     User createUser(User newUser);
+    User updateUser(User user);
 }
