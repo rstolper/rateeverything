@@ -23,6 +23,11 @@
 
         $scope.navBar = {};
 
+        $scope.nativeAuth = {
+            action: "Login",
+            usernameIsEmail: false
+        };
+
         $scope.hasAtLeastOneItem = function () {
             return Object.keys($scope.allItems).length > 0;
         };
@@ -43,8 +48,7 @@
             console.log('Image URL: ' + profile.getImageUrl());
             console.log('Email: ' + profile.getEmail());
 
-            var googleIdToken = googleUser.getAuthResponse().id_token;
-            $scope.googleIdToken = googleIdToken;
+            $scope.authToken = googleUser.getAuthResponse().id_token;
             $scope.authProvider = 'Google';
 
             var userIdFromServer = "";
@@ -52,7 +56,7 @@
             $scope.$digest;
 
             // get user
-            $scope.dao.getUserViaGoogle(googleIdToken, function (response) {
+            $scope.dao.getUser($scope.authToken, $scope.authProvider, function (response) {
                 console.log('user found: ' + JSON.stringify(response.data));
                 userIdFromServer = response.data.userId.value;
                 $scope.completeLogin(userIdFromServer);
@@ -60,7 +64,7 @@
             function() {
                 console.log('user not found with id token: ' + profile.getId());
                 // create new user
-                $scope.dao.createUserViaGoogle(googleIdToken, function(response) {
+                $scope.dao.createUserViaGoogle($scope.authToken, function(response) {
                     console.log("Created user: " + JSON.stringify(response.data));
                     userIdFromServer = response.data.userId.value;
                     $scope.completeLogin(userIdFromServer);
@@ -69,12 +73,30 @@
         }
         window.onGoogleSignIn = onGoogleSignIn;
 
-        $scope.loginDebug = function () {
-            if ($scope.userId && $scope.userId.trim().length > 0) {
-                $scope.authProvider = 'Debug';
-                $scope.completeLogin($scope.userId);
+//        $scope.loginDebug = function () {
+//            if ($scope.userId && $scope.userId.trim().length > 0) {
+//                $scope.authProvider = 'Debug';
+//                $scope.completeLogin($scope.userId);
+//            }
+//        };
+
+        $scope.loginNativeAuth = function() {
+            if ($scope.nativeAuth.action == "Login") {
+                console.log("Logging in with username: " + $scope.nativeAuth.username);
+                $scope.dao.getNativeAuthToken($scope.nativeAuth.username, $scope.nativeAuth.password, function (response) {
+                    console.log("Got native auth token: " + JSON.stringify(response.data));
+                }, function (response) {
+                    console.log("Error logging in:" + JSON.stringify(response.data));
+                });
+            } else {
+                console.log("Creating new user with username: " + $scope.nativeAuth.username);
+                $scope.dao.createUserViaNative($scope.nativeAuth.username, $scope.nativeAuth.password, function (response) {
+                    console.log("Created user via native auth: " + JSON.stringify(response.data));
+                }, function (response) {
+                    console.log("Error creating user:" + JSON.stringify(response.data));
+                });
             }
-        };
+        }
 
         $scope.completeLogin = function (userId) {
             $scope.loggedInUser = userId;
@@ -82,7 +104,7 @@
             console.log("Scope.loggedInUser: " + $scope.loggedInUser);
 
             // find all items by username
-            $scope.dao.getAllItems($scope.googleIdToken, function (response) {
+            $scope.dao.getAllItems($scope.authToken, $scope.authProvider, function (response) {
                 var receivedItems = response.data;
                 $scope.allItems = {};
                 $scope.searchResultItems = {};
@@ -123,7 +145,7 @@
             if (!$scope.loggedInUser || !$scope.newItem.category || !$scope.newItem.name || !$scope.newItem.rating)
                 return;
 
-            $scope.dao.insertItem($scope.googleIdToken, $scope.newItem, function (response) {
+            $scope.dao.insertItem($scope.authToken, $scope.authProvider, $scope.newItem, function (response) {
                 var item = response.data;
                 newItemHandler(item);
                 $scope.newItem.name = "";
@@ -146,7 +168,7 @@
 
         $scope.deleteItem = function (item) {
             var itemId = item.itemId;
-            $scope.dao.deleteItem($scope.googleIdToken, itemId, function (response) {
+            $scope.dao.deleteItem($scope.authToken, $scope.authProvider, itemId, function (response) {
                 delete $scope.allItems[itemId];
                 lunrService.removeItemFromLunr({itemId: itemId});
                 //$scope.newItem = item; // for ease of readding

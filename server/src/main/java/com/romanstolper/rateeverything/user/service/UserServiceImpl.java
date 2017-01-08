@@ -30,7 +30,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserViaUsername(String username) {
+        return userPersistence.getUserByUsername(username);
+    }
+
+    @Override
     public User createUser(User newUser) {
         return userPersistence.insertUser(newUser);
+    }
+
+    @Override
+    public User updateUser(User user) {
+        return userPersistence.updateUser(user);
     }
 }

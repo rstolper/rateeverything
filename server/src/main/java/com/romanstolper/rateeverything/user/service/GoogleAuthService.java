@@ -21,12 +21,12 @@ public class GoogleAuthService {
             .setAudience(Collections.singletonList(CLIENT_ID))
             .build();
 
-    public GoogleDetails getGoogleDetails(String googleIdToken) throws GeneralSecurityException, IOException {
+    public GoogleDetails parse(String googleIdToken) throws GeneralSecurityException, IOException {
         GoogleIdToken idToken = verifier.verify(googleIdToken);
         if (idToken != null) {
             GoogleIdToken.Payload payload = idToken.getPayload();
             String googleId = payload.getSubject();
-            System.out.println("Create user with GoogleID: " + googleId);
+            System.out.println("Google auth token contains GoogleID: " + googleId);
 
             // Get profile information from payload
             String email = payload.getEmail();

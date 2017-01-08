@@ -60,6 +60,20 @@
                     <p>Welcome to Rate Everything! Please use Google to login / create an account.</p>
                     <div class="g-signin2" data-onsuccess="onGoogleSignIn"></div>
                 </div>
+                <div ng-hide="isLoggedIn()">
+                    <p>Or login / register with a username/password</p>
+                    <form class="form-inline" role="form" name="nativeAuthForm" ng-submit="loginNativeAuth()" />
+                        <input type="text" class="form-control" placeholder="Username" ng-model="nativeAuth.username" ng-disabled="isLoggedIn()" />
+                        <br><label>Username is email: <input type="checkbox" ng-model="nativeAuth.usernameIsEmail"></label>
+                        <br><input type="text" class="form-control" placeholder="Password" ng-model="nativeAuth.password" ng-disabled="isLoggedIn()" />
+                        <br>
+                        <label><input type="radio" ng-model="nativeAuth.action" value="Login">Login</label>
+                        <label><input type="radio" ng-model="nativeAuth.action" value="Register">Register</label>
+                        <br>
+                        <button type="submit" class="btn btn-primary" >Submit</button>
+                    </form>
+                </div>
+
                 <div ng-show="isLoggedIn()">
                     <div>
                         <form class="form" role="form" name="searchItemsForm" />

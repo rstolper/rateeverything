@@ -21,5 +21,11 @@
             <artifactId>h2</artifactId>
             <version>1.3.176</version>
         </dependency>
+
+        <!-- DynamoDB -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-dynamodb</artifactId>
+        </dependency>
     </dependencies>
 </project>

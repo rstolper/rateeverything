@@ -13,6 +13,8 @@ public interface UserPersistence {
     User getUser(UserId userId);
     Collection<User> getAllUsers();
     User insertUser(User newUser);
+    User updateUser(User user);
 
     User getUserByGoogleId(GoogleId googleId);
+    User getUserByUsername(String username);
  }

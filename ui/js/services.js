@@ -4,13 +4,14 @@
 
     app.factory('restDao', function(cloneItem, $http) {
         return {
-            insertItem: function(googleIdToken, item, addedItemCallback)
+            insertItem: function(authToken, authProvider, item, addedItemCallback)
             {
                 var req = {
                     method: 'POST',
                     url: '/app/api/v1/user/items',
                     headers: {
-                        'AuthToken': googleIdToken
+                        'AuthToken': authToken,
+                        'AuthProvider': authProvider
                     },
                     data: item
                 }
@@ -19,13 +20,14 @@
                 });
             },
 
-            getAllItems: function (googleIdToken, itemsReceivedCallback)
+            getAllItems: function (authToken, authProvider, itemsReceivedCallback)
             {
                 var req = {
                     method: 'GET',
                     url: '/app/api/v1/user/items',
                     headers: {
-                        'AuthToken': googleIdToken
+                        'AuthToken': authToken,
+                        'AuthProvider': authProvider
                     }
                 }
                 $http(req).then(itemsReceivedCallback, function(response) {
@@ -33,13 +35,14 @@
                 })
             },
 
-            deleteItem: function (googleIdToken, itemId, itemDeletedCallback)
+            deleteItem: function (authToken, authProvider, itemId, itemDeletedCallback)
             {
                 var req = {
                     method: 'DELETE',
                     url: '/app/api/v1/user/items/' + itemId,
                     headers: {
-                        'AuthToken': googleIdToken
+                        'AuthToken': authToken,
+                        'AuthProvider': authProvider
                     }
                 }
                 $http(req).then(itemDeletedCallback, function(response) {
@@ -47,13 +50,14 @@
                 });
             },
 
-            getUserViaGoogle: function (googleIdToken, userFoundCallback, userNotFoundCallback)
+            getUser: function (authToken, authProvider, userFoundCallback, userNotFoundCallback)
             {
                 var req = {
                     method: 'GET',
-                    url: '/app/api/v1/users/viaGoogleAuthToken',
+                    url: '/app/api/v1/user',
                     headers: {
-                        'AuthToken': googleIdToken
+                        'AuthToken': authToken,
+                        'AuthProvider': authProvider
                     }
                 }
                 $http(req).then(userFoundCallback, userNotFoundCallback);
@@ -65,6 +69,30 @@
                     url: '/app/api/v1/users/viaGoogleAuthToken',
                     headers: {
                         'AuthToken': googleIdToken
+                    }
+                }
+                $http(req).then(successCallback, errorCallback);
+            },
+
+            createUserViaNative: function (username, password, successCallback, errorCallback) {
+                var req = {
+                    method: 'POST',
+                    url: '/app/api/v1/users/viaNativeAuth',
+                    data: {
+                        username: username,
+                        password: password
+                    }
+                }
+                $http(req).then(successCallback, errorCallback);
+            },
+
+            getNativeAuthToken: function (username, password, successCallback, errorCallback) {
+                var req = {
+                    method: 'POST',
+                    url: '/app/api/v1/auth',
+                    data: {
+                        username: username,
+                        password: password
                     }
                 }
                 $http(req).then(successCallback, errorCallback);
