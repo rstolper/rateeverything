@@ -6,12 +6,17 @@ import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
+import com.amazonaws.services.dynamodbv2.model.GlobalSecondaryIndex;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
+import com.amazonaws.services.dynamodbv2.model.Projection;
+import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import com.romanstolper.rateeverything.user.domain.GoogleDetails;
 import com.romanstolper.rateeverything.user.domain.GoogleId;
+import com.romanstolper.rateeverything.user.domain.GoogleProfile;
 import com.romanstolper.rateeverything.user.domain.User;
 import junit.framework.Assert;
 import org.junit.After;
@@ -48,23 +53,46 @@ public class DynamoDbUserPersistenceIntegrationTest {
         attributeDefinitions.add(new AttributeDefinition()
                 .withAttributeName("UserId")
                 .withAttributeType("S"));
+        attributeDefinitions.add(new AttributeDefinition()
+                .withAttributeName("GoogleId")
+                .withAttributeType("S"));
+        attributeDefinitions.add(new AttributeDefinition()
+                .withAttributeName("NativeAuthUsername")
+                .withAttributeType("S"));
 
+        GlobalSecondaryIndex gsiGoogleId = new GlobalSecondaryIndex()
+                .withIndexName(DynamoDbUserPersistence.IDX_GOOGLEID)
+                .withProvisionedThroughput(new ProvisionedThroughput()
+                        .withReadCapacityUnits(1L)
+                        .withWriteCapacityUnits(1L))
+                .withKeySchema(new KeySchemaElement()
+                        .withAttributeName("GoogleId")
+                        .withKeyType(KeyType.HASH))
+                .withProjection(new Projection()
+                    .withProjectionType(ProjectionType.ALL));
+
+        GlobalSecondaryIndex gsiUsername = new GlobalSecondaryIndex()
+                .withIndexName(DynamoDbUserPersistence.IDX_NATIVEAUTHUSERNAME)
+                .withProvisionedThroughput(new ProvisionedThroughput()
+                        .withReadCapacityUnits(1L)
+                        .withWriteCapacityUnits(1L))
+                .withKeySchema(new KeySchemaElement()
+                        .withAttributeName("NativeAuthUsername")
+                        .withKeyType(KeyType.HASH))
+                .withProjection(new Projection()
+                        .withProjectionType(ProjectionType.ALL));
 
         CreateTableRequest request = new CreateTableRequest()
                 .withTableName(tableName)
                 .withKeySchema(keySchema)
                 .withAttributeDefinitions(attributeDefinitions)
+                .withGlobalSecondaryIndexes(gsiGoogleId, gsiUsername)
                 .withProvisionedThroughput(new ProvisionedThroughput()
                         .withReadCapacityUnits(1L)
                         .withWriteCapacityUnits(1L));
 
         System.out.println("Issuing CreateTable request for " + tableName);
-        Table table = dynamoDB.createTable(request);
-
-//        System.out.println("Waiting for " + tableName + " to be created");
-        table.waitForActive();
-
-//        getTableInformation();
+        dynamoDB.createTable(request).waitForActive();
     }
 
     @Test
@@ -82,10 +110,29 @@ public class DynamoDbUserPersistenceIntegrationTest {
         User user1 = new User();
         user1.setUserId(UserIdGen.newId());
         user1.setGoogleId(new GoogleId("123"));
+        GoogleProfile googleProfile = new GoogleProfile();
+        googleProfile.setName("roman stolper");
+        googleProfile.setEmail("roman@stolper.com");
+        googleProfile.setEmailVerified(true);
+        googleProfile.setFamilyName("stolper");
+        googleProfile.setGivenName("roman");
+        googleProfile.setImageUrl("http://somewhere");
+        googleProfile.setLocale("en");
+        GoogleDetails googleDetails = new GoogleDetails(user1.getGoogleId(), googleProfile);
+
+        user1.setGoogleDetails(googleDetails);
         userPersistence.insertUser(user1);
 
-        User firstUser = userPersistence.getUser(user1.getUserId());
-        assertEquals(firstUser.getGoogleId().getValue(), user1.getGoogleId().getValue());
+        User gotUser = userPersistence.getUser(user1.getUserId());
+        assertEquals(user1.getGoogleId().getValue(), gotUser.getGoogleId().getValue());
+        GoogleProfile gotProfile = gotUser.getGoogleDetails().getGoogleProfile();
+        assertEquals(googleProfile.getName(), gotProfile.getName());
+        assertEquals(googleProfile.getEmail(), gotProfile.getEmail());
+        assertEquals(googleProfile.isEmailVerified(), gotProfile.isEmailVerified());
+        assertEquals(googleProfile.getFamilyName(), gotProfile.getFamilyName());
+        assertEquals(googleProfile.getGivenName(), gotProfile.getGivenName());
+        assertEquals(googleProfile.getImageUrl(), gotProfile.getImageUrl());
+        assertEquals(googleProfile.getLocale(), gotProfile.getLocale());
     }
 
     @Test
@@ -129,21 +176,18 @@ public class DynamoDbUserPersistenceIntegrationTest {
 
     @Test
     public void getUserByUsername() throws Exception {
+        User user1 = new User();
+        user1.setUserId(UserIdGen.newId());
+        user1.setNativeAuthUsername("user1");
 
+        User user2 = new User();
+        user2.setUserId(UserIdGen.newId());
+        user2.setNativeAuthUsername("user2");
+
+        userPersistence.insertUser(user1);
+        userPersistence.insertUser(user2);
+
+        User gotUser = userPersistence.getUserByUsername("user2");
+        assertEquals(user2.getUserId().getValue(), gotUser.getUserId().getValue());
     }
-
-//    private void getTableInformation() {
-//
-//        System.out.println("Describing " + tableName);
-//
-//        TableDescription tableDescription = dynamoDB.getTable(tableName).describe();
-//        System.out.format("Name: %s:\n" + "Status: %s \n"
-//                        + "Provisioned Throughput (read capacity units/sec): %d \n"
-//                        + "Provisioned Throughput (write capacity units/sec): %d \n",
-//                tableDescription.getTableName(),
-//                tableDescription.getTableStatus(),
-//                tableDescription.getProvisionedThroughput().getReadCapacityUnits(),
-//                tableDescription.getProvisionedThroughput().getWriteCapacityUnits());
-//    }
-
 }

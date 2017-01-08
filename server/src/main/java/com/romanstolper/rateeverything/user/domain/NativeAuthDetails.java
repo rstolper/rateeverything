@@ -1,17 +1,37 @@
 package com.romanstolper.rateeverything.user.domain;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+
+@DynamoDBDocument
 public class NativeAuthDetails {
+
+    @DynamoDBAttribute(attributeName = "Username")
     private String username;
+
+    @DynamoDBAttribute(attributeName = "Password")
     private String password;
+
+    @DynamoDBAttribute(attributeName = "AuthToken")
     private String authToken;
+
     /**
      * ISO-8601 formatted string
      */
+    @DynamoDBAttribute(attributeName = "AuthTokenExpiry")
     private String authTokenExpiry;
 
+    @DynamoDBAttribute(attributeName = "Email")
     private String email;
+
+    @DynamoDBAttribute(attributeName = "Name")
     private String name;
+
+    @DynamoDBAttribute(attributeName = "ImageUrl")
     private String imageUrl;
+
+    public NativeAuthDetails() {
+    }
 
     public String getUsername() {
         return username;

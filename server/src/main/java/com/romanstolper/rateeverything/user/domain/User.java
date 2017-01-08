@@ -1,5 +1,7 @@
 package com.romanstolper.rateeverything.user.domain;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
@@ -9,6 +11,7 @@ import com.romanstolper.rateeverything.user.persistence.DynamoDBUserIdConverter;
 
 @DynamoDBTable(tableName = "Users")
 public class User {
+
     @DynamoDBHashKey(attributeName = "UserId")
     @DynamoDBTypeConverted(converter = DynamoDBUserIdConverter.class)
     private UserId userId;
@@ -20,7 +23,10 @@ public class User {
     @DynamoDBIndexHashKey(attributeName = "NativeAuthUsername", globalSecondaryIndexName = "NativeAuthUsername-index")
     private String nativeAuthUsername;
 
+    @DynamoDBAttribute(attributeName = "GoogleDetails")
     private GoogleDetails googleDetails;
+
+    @DynamoDBAttribute(attributeName = "NativeAuthDetails")
     private NativeAuthDetails nativeAuthDetails;
 
     public User() {
@@ -28,6 +34,10 @@ public class User {
 
     public User(UserId userId) {
         this.userId = userId;
+    }
+
+    public User(GoogleId googleId) {
+        this.googleId = googleId;
     }
 
     public void setUserId(UserId userId) {
