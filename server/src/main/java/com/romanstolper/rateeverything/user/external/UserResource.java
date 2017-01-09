@@ -1,6 +1,5 @@
 package com.romanstolper.rateeverything.user.external;
 
-import com.romanstolper.rateeverything.item.domain.ItemId;
 import com.romanstolper.rateeverything.item.external.ItemsResource;
 import com.romanstolper.rateeverything.item.service.ItemService;
 import com.romanstolper.rateeverything.user.domain.UserId;
@@ -9,7 +8,11 @@ import com.romanstolper.rateeverything.user.service.UserService;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 /**
  * APIs for a single user

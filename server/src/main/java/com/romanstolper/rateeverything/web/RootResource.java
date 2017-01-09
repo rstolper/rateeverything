@@ -1,6 +1,7 @@
 package com.romanstolper.rateeverything.web;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.romanstolper.rateeverything.admin.api.AdminResource;
 import com.romanstolper.rateeverything.item.persistence.DynamoDbItemPersistence;
 import com.romanstolper.rateeverything.item.service.ItemService;
 import com.romanstolper.rateeverything.item.service.ItemServiceImpl;
@@ -112,5 +113,10 @@ public class RootResource {
         userService.updateUser(user);
         // return it
         return Response.ok(new NativeAuthToken(authToken)).build();
+    }
+
+    @Path("admin")
+    public AdminResource adminResource() {
+        return new AdminResource(itemService);
     }
 }
