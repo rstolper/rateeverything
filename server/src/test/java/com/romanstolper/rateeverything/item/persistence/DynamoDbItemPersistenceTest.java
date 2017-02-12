@@ -15,6 +15,7 @@ import com.romanstolper.rateeverything.item.domain.Rating;
 import com.romanstolper.rateeverything.user.persistence.DynamoDbUserPersistence;
 import com.romanstolper.rateeverything.user.persistence.UserIdGen;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.time.Instant;
@@ -26,6 +27,7 @@ import static org.junit.Assert.*;
  * Note: This test requires a local instance of dynamodb running at localhost:8000
  * Preferably with -inMemory, so that it's a clean slate..
  */
+@Ignore("Need to automate inmem dynamo startup")
 public class DynamoDbItemPersistenceTest {
     AmazonDynamoDBClient client = new AmazonDynamoDBClient().withEndpoint("http://localhost:8000");
     DynamoDB dynamoDB = new DynamoDB(client);

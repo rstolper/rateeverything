@@ -22,6 +22,7 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import static org.junit.Assert.*;
  * Note: This test requires a local instance of dynamodb running at localhost:8000
  * Preferably with -inMemory, so that it's a clean slate..
  */
+@Ignore("Need to automate inmem dynamo startup")
 public class DynamoDbUserPersistenceIntegrationTest {
     AmazonDynamoDBClient client = new AmazonDynamoDBClient().withEndpoint("http://localhost:8000");
     DynamoDB dynamoDB = new DynamoDB(client);
