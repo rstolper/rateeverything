@@ -44,8 +44,7 @@ public class UsersResource {
     {
         GoogleDetails googleDetails = googleAuthService.parse(googleIdToken);
         if (googleDetails != null) {
-            User newUser = new User(null);
-            newUser.setGoogleId(googleDetails.getGoogleId());
+            User newUser = new User(googleDetails.getGoogleId());
             User createdUser = userService.createUser(newUser);
             return Response.ok(createdUser).build();
         } else {
@@ -64,7 +63,7 @@ public class UsersResource {
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
-        User newUser = new User(null);
+        User newUser = new User();
         newUser.setNativeAuthUsername(username);
 
         NativeAuthDetails nativeAuthDetails = new NativeAuthDetails();

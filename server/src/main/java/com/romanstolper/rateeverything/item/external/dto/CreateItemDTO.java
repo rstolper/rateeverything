@@ -3,10 +3,11 @@ package com.romanstolper.rateeverything.item.external.dto;
 /**
  * Input payload for creating a new item
  */
-public class ItemCreateDTO {
+public class CreateItemDTO {
     private String name;
     private String category;
     private String rating;
+    private String notes;
 
     public String getName() {
         return name;
@@ -30,5 +31,13 @@ public class ItemCreateDTO {
 
     public void setRating(String rating) {
         this.rating = rating;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }

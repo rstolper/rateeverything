@@ -1,12 +1,13 @@
 body {
   padding-top: 50px;
 }
+
 .starter-template {
   padding: 20px 0px;
   text-align: left;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio:2) { 
+@media screen and (-webkit-min-device-pixel-ratio:2) {
     select:focus, textarea:focus, input:focus {
         font-size: 16px;
         /* background:#eee; */

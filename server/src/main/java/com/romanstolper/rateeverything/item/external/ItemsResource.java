@@ -2,7 +2,7 @@ package com.romanstolper.rateeverything.item.external;
 
 import com.romanstolper.rateeverything.item.domain.ItemId;
 import com.romanstolper.rateeverything.item.domain.Rating;
-import com.romanstolper.rateeverything.item.external.dto.ItemCreateDTO;
+import com.romanstolper.rateeverything.item.external.dto.CreateItemDTO;
 import com.romanstolper.rateeverything.item.external.dto.ItemDTO;
 import com.romanstolper.rateeverything.item.service.ItemService;
 import com.romanstolper.rateeverything.item.domain.Item;
@@ -62,7 +62,7 @@ public class ItemsResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createItem(ItemCreateDTO newItem) {
+    public Response createItem(CreateItemDTO newItem) {
         if (newItem == null || newItem.getName() == null || newItem.getName().trim().equals("")) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Name cannot be blank").build();
         }
@@ -71,7 +71,7 @@ public class ItemsResource {
         if (itemRating == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Invalid rating: " + newItem.getRating()).build();
         }
-        Item createdItem = itemService.createItem(new Item(null, userId, newItem.getName(), newItem.getCategory(), itemRating, Instant.now()));
+        Item createdItem = itemService.createItem(new Item(null, userId, newItem.getName(), newItem.getCategory(), itemRating, newItem.getNotes(), Instant.now()));
         ItemDTO itemDTO = new ItemDTO(createdItem);
         itemDTO.setUrl(uriInfo.getAbsolutePathBuilder().path("{itemId}").build(createdItem.getItemId()));
         return Response.created(itemDTO.getUrl()).entity(itemDTO).build();

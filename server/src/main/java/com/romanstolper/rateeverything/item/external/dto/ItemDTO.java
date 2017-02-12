@@ -14,6 +14,7 @@ public class ItemDTO {
     private String name;
     private String category;
     private String rating;
+    private String notes;
     private long creationDate;
 
     public ItemDTO() {}
@@ -24,6 +25,7 @@ public class ItemDTO {
         this.setName(item.getName());
         this.setCategory(item.getCategory());
         this.setRating(item.getRating().getDisplayText());
+        this.setNotes(item.getNotes());
         this.setCreationDate(item.getCreatedDate().toEpochMilli());
     }
 
@@ -73,6 +75,14 @@ public class ItemDTO {
 
     public void setRating(String rating) {
         this.rating = rating;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public long getCreationDate() {

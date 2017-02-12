@@ -37,29 +37,39 @@ public class Item {
     @DynamoDBTypeConvertedEnum()
     private Rating rating;
 
+    @DynamoDBAttribute(attributeName = "Notes")
+    private String notes;
+
     @DynamoDBAttribute(attributeName = "CreatedDate")
     @DynamoDBTypeConverted(converter = DynamoDBInstantConverter.class)
     private Instant createdDate;
 
     public static final Item DEFAULT = new Item(new ItemId("0"), new UserId("NOBODY"),"DEFAULT", "DEFAULT", Rating.UNRATED);
 
-    // TODO: make this constructor call the other constructor with date as now().
-    public Item(ItemId itemId, UserId userId, String name, String category, Rating rating) {
+    public Item(ItemId itemId, UserId userId, String name, String category, Rating rating, String notes, Instant createdDate) {
         this.itemId = itemId;
         this.userId = userId;
         this.name = name;
         this.category = category;
         this.rating = rating;
-    }
-
-    // TODO: make this constructor set all fields, including date
-    public Item(ItemId itemId, UserId userId, String name, String category, Rating rating, Instant createdDate) {
-        this(itemId, userId, name, category, rating);
+        this.notes = notes;
         this.createdDate = createdDate;
     }
 
+    public Item(ItemId itemId, UserId userId, String name, String category, Rating rating) {
+        this(itemId, userId, name, category, rating, null, Instant.now());
+    }
+
     public Item(ItemId itemId, Item copyItem) {
-        this(itemId, copyItem.getUserId(), copyItem.getName(), copyItem.getCategory(), copyItem.getRating(), copyItem.getCreatedDate());
+        this(
+                itemId,
+                copyItem.getUserId(),
+                copyItem.getName(),
+                copyItem.getCategory(),
+                copyItem.getRating(),
+                copyItem.getNotes(),
+                copyItem.getCreatedDate()
+        );
     }
 
     public Item(UserId userId) {
@@ -89,7 +99,6 @@ public class Item {
     }
 
     public void setName(String name) {
-        System.out.println("Calling setter");
         this.name = name;
     }
 
@@ -107,6 +116,14 @@ public class Item {
 
     public void setRating(Rating rating) {
         this.rating = rating;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public Instant getCreatedDate() {

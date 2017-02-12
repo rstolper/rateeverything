@@ -12,10 +12,14 @@
 
         <!-- Bootstrap -->
         <link href="lib/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!-- Custom styles for this template -->
-        <link href="css/starter-template.css" rel="stylesheet">
+
         <!-- Bootstrap theme -->
         <link href="lib/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link href="css/rateeverything.css" rel="stylesheet">
+
+        <link href="font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -96,12 +100,23 @@
                             <h4 ng-repeat-start="(category, items) in itemsByCategory">
                                 {{category}} [<a href="#" ng-click="addItemToCategoryRequest(category)" data-toggle="modal" data-target="#addItemModal">+add</a>]
                             </h4>
-                            <ul style="padding:0px 20px" ng-repeat-end>
+                            <ul class="item-list" ng-repeat-end>
                                 <li ng-repeat="item in items | orderBy:'creationDate':true track by item.itemId ">
                                     <div data-toggle="tooltip" data-placement="left" title="{{item.creationDate | date:'MM/dd/yyyy @ h:mma'}}">
-                                        {{item.name}}: {{item.rating}}
-                                        <a href="#" ng-click="deleteItem(item)">delete</a>
+                                        <i class="fa" ng-class="{
+                                            'fa-times-circle': item.rating == 'No',
+                                            'fa-check-circle': item.rating == 'Yes',
+                                            'fa-minus-circle': item.rating == 'Maybe',
+                                            'item-rating-no': item.rating == 'No',
+                                            'item-rating-yes': item.rating == 'Yes',
+                                            'item-rating-maybe': item.rating == 'Maybe'
+                                        }" aria-hidden="true"></i>
+                                        <span class="item-name">{{item.name}}</span>
+                                        <a href="#" ng-click="deleteItem(item)"><i class="fa fa-trash"></i></a>
                                     </div>
+                                    <span class="item-notes" ng-if="item.notes">
+                                        <i class="fa fa-circle" style="visibility:hidden"></i>"{{item.notes}}"
+                                    </span>
                                 </li>
                             </ul>
                         </div>
@@ -124,19 +139,31 @@
                                             <option value="No">No</option>
                                             <option value="Maybe">Maybe</option>
                                         </select>
-                                        <button type="submit" class="btn btn-success">Add New Item</button>
+                                        <input type="text" class="form-control" placeholder="Notes" ng-model="newItem.notes" />
+                                        <button type="submit" class="btn btn-success">Save</button>
                                     </form>
                                     
                                     <div class="panel-body">
                                         <h4 ng-repeat-start="(category, items) in newItemSearchByCategory">
                                             {{category}} [<a href="#" ng-click="addItemToCategoryRequest(category)">+add</a>]
                                         </h4>
-                                        <ul style="padding:0px 20px" ng-repeat-end>
+                                        <ul class="item-list" ng-repeat-end>
                                             <li ng-repeat="item in items | orderBy:'creationDate':true track by item.itemId">
                                                 <div data-toggle="tooltip" data-placement="left" title="{{item.creationDate | date:'MM/dd/yyyy @ h:mma'}}">
-                                                    {{item.name}}: {{item.rating}}
-                                                    <a href="#" ng-click="deleteItem(item)">delete</a>
+                                                    <i class="fa" ng-class="{
+                                                        'fa-times-circle': item.rating == 'No',
+                                                        'fa-check-circle': item.rating == 'Yes',
+                                                        'fa-minus-circle': item.rating == 'Maybe',
+                                                        'item-rating-no': item.rating == 'No',
+                                                        'item-rating-yes': item.rating == 'Yes',
+                                                        'item-rating-maybe': item.rating == 'Maybe'
+                                                    }" aria-hidden="true"></i>
+                                                    <span class="item-name">{{item.name}}</span>
+                                                    <a href="#" ng-click="deleteItem(item)"><i class="fa fa-trash"></i></a>
                                                 </div>
+                                                <span class="item-notes" ng-if="item.notes">
+                                                    <i class="fa fa-circle" style="visibility:hidden"></i>"{{item.notes}}"
+                                                </span>
                                             </li>
                                         </ul>
                                     </div>
