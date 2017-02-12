@@ -150,6 +150,7 @@
                 newItemHandler(item);
                 $scope.newItem.name = "";
                 $scope.newItem.rating = "";
+                $scope.newItem.notes = "";
                 //$scope.search('searchbar')
                 refreshActiveSearch();
                 // TODO: be more intelligent about knowing if addItem modal is open
@@ -172,6 +173,10 @@
                 delete $scope.allItems[itemId];
                 lunrService.removeItemFromLunr({itemId: itemId});
                 //$scope.newItem = item; // for ease of readding
+                $scope.newItem.name = item.name;
+                $scope.newItem.category = item.category;
+                $scope.newItem.rating = item.rating;
+                $scope.newItem.notes = item.notes;
                 refreshActiveSearch();
                 // TODO: be more intelligent about knowing if addItem modal is open
                 $scope.searchWhileAdding();
@@ -220,6 +225,30 @@
             lunrService.addItemToLunr(item)
         }
 
+//        function compareItems(a,b) {
+//          if (a.category != b.category) {
+//            if (a.category > b.category) {
+//                return -1;
+//            } else {
+//                return 1;
+//            }
+//          } else if (a.rating != b.rating) {
+//            if (a.rating == 'Yes') {
+//                return -1;
+//            } else if (a.rating == 'Maybe' && b.rating == 'No') {
+//                return -1;
+//            } else {
+//                return 1;
+//            }
+//          } else {
+//            if (a.name > b.name) {
+//                return 1;
+//            } else {
+//                return -1;
+//            }
+//          }
+//        }
+
         function refreshActiveSearch()
         {
             if ($scope.isSearchActive)
@@ -235,6 +264,10 @@
             }
 
             $scope.itemsByCategory = _.groupBy($scope.searchResultItems, 'category');
+
+//            Object.keys($scope.itemsByCategory).forEach(function(key) {
+//                $scope.itemsByCategory[key].sort(compareItems);
+//            });
         }
     });
 })();
