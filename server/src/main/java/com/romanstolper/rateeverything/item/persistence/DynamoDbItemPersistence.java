@@ -43,7 +43,8 @@ public class DynamoDbItemPersistence implements ItemPersistence {
 
     @Override
     public Item updateItem(Item item) {
-        return null;
+        mapper.save(item);
+        return item;
     }
 
     @Override

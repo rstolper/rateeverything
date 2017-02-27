@@ -64,6 +64,7 @@
                     <p>Welcome to Rate Everything! Please use Google to login / create an account.</p>
                     <div class="g-signin2" data-onsuccess="onGoogleSignIn"></div>
                 </div>
+                <!-- native login isn't ready, ignore this bit
                 <div ng-hide="isLoggedIn()">
                     <p>Or login / register with a username/password</p>
                     <form class="form-inline" role="form" name="nativeAuthForm" ng-submit="loginNativeAuth()" />
@@ -77,6 +78,7 @@
                         <button type="submit" class="btn btn-primary" >Submit</button>
                     </form>
                 </div>
+                -->
 
                 <div ng-show="isLoggedIn()">
                     <div>
@@ -92,7 +94,7 @@
                             <h4 class="panel-title" ng-switch="isSearchActive">
 <!--                                TODO: Move clear into search bar as X, keep add item on search results screen-->
                                 <div ng-switch-when="true">Search Results [<a href="#" ng-click="clearSearchString()">clear</a>]</div>
-                                <div ng-switch-when="false">All Items [<a href="#" data-toggle="modal" data-target="#addItemModal">+add item</a>]</div>
+                                <div ng-switch-when="false">All Items [<a href="#" ng-click="newItemRequest()" data-toggle="modal" data-target="#addItemModal">+add item</a>]</div>
                             </h4>
                         </div>
 
@@ -112,7 +114,10 @@
                                             'item-rating-maybe': item.rating == 'Maybe'
                                         }" aria-hidden="true"></i>
                                         <span class="item-name">{{item.name}}</span>
-                                        <a href="#" ng-click="deleteItem(item)"><i class="fa fa-trash"></i></a>
+                                        <span class="item-actions">
+                                            [<a href="#" ng-click="updateItemRequest(item)" data-toggle="modal" data-target="#addItemModal">edit</i></a>]
+                                            [<a href="#" ng-click="deleteItem(item)">delete</i></a>]
+                                        </span>
                                     </div>
                                     <span class="item-notes" ng-if="item.notes">
                                         <i class="fa fa-circle" style="visibility:hidden"></i>"{{item.notes}}"
@@ -127,10 +132,13 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                    <h4 class="modal-title">Add Items</h4>
+                                    <h4 class="modal-title">
+                                        <span ng-if="updateItemId">Update</span>
+                                        <span ng-if="!updateItemId">Add</span>
+                                        Item</h4>
                                 </div>
                                 <div class="modal-body">
-                                    <form role="form" name="addItemForm" ng-submit="addNewItem()">
+                                    <form role="form" name="addItemForm" ng-submit="addOrUpdateItem()">
                                         <input type="text" class="form-control" placeholder="Category" ng-model="newItem.category" required ng-keyup="searchWhileAdding()" /> 
                                         <input type="text" class="form-control" placeholder="Item Name" ng-model="newItem.name" focus-on="addItemToCategoryRequest" ng-keyup="searchWhileAdding()" required />
                                         <select class="form-control" ng-model="newItem.rating" required>
@@ -159,7 +167,10 @@
                                                         'item-rating-maybe': item.rating == 'Maybe'
                                                     }" aria-hidden="true"></i>
                                                     <span class="item-name">{{item.name}}</span>
-                                                    <a href="#" ng-click="deleteItem(item)"><i class="fa fa-trash"></i></a>
+                                                    <span class="item-actions">
+                                                        [<a href="#" ng-click="updateItemRequest(item)" data-toggle="modal" data-target="#addItemModal">edit</i></a>]
+                                                        [<a href="#" ng-click="deleteItem(item)">delete</i></a>]
+                                                    </span>
                                                 </div>
                                                 <span class="item-notes" ng-if="item.notes">
                                                     <i class="fa fa-circle" style="visibility:hidden"></i>"{{item.notes}}"

@@ -7,6 +7,7 @@
         $scope.dao = restDao;
 
         $scope.newItem = {};
+        $scope.updateItemId = "";
         $scope.allItems = {}; // static maintainer of all items the user has
         $scope.itemsByCategory = {};
         $scope.newItemSearchByCategory = {};
@@ -140,6 +141,14 @@
             $scope.logout();
         }
 
+        $scope.addOrUpdateItem = function () {
+            if ($scope.updateItemId) {
+                return $scope.updateItem();
+            } else {
+                return $scope.addNewItem();
+            }
+        }
+
         $scope.addNewItem = function () {
             // exit if anything is empty
             if (!$scope.loggedInUser || !$scope.newItem.category || !$scope.newItem.name || !$scope.newItem.rating)
@@ -159,12 +168,46 @@
             });
         };
 
-        $scope.addItemToCategoryRequest = function(category) {
-            $scope.newItem.category = category;
+        $scope.updateItem = function () {
+            // exit if anything is empty
+            if (!$scope.loggedInUser || !$scope.updateItemId)
+                return;
+
+            $scope.dao.updateItem($scope.authToken, $scope.authProvider, $scope.updateItemId, $scope.newItem, function (response) {
+                var item = response.data;
+                updateItemHandler(item);
+                refreshActiveSearch();
+                // TODO: be more intelligent about knowing if addItem modal is open
+                $scope.searchWhileAdding();
+            });
+        };
+
+        $scope.newItemRequest = function() {
+            $scope.updateItemId = "";
             $scope.newItem.name = "";
+            $scope.newItem.category = "";
             $scope.newItem.rating = "";
+            $scope.newItem.notes = "";
+            $scope.searchWhileAdding();
+        }
+
+        $scope.addItemToCategoryRequest = function(category) {
+            $scope.updateItemId = "";
+            $scope.newItem.name = "";
+            $scope.newItem.category = category;
+            $scope.newItem.rating = "";
+            $scope.newItem.notes = "";
             $scope.searchWhileAdding();
             $scope.$broadcast('addItemToCategoryRequest');
+        }
+
+        $scope.updateItemRequest = function(item) {
+            $scope.updateItemId = item.itemId;
+            $scope.newItem.name = item.name;
+            $scope.newItem.category = item.category;
+            $scope.newItem.rating = item.rating;
+            $scope.newItem.notes = item.notes;
+            $scope.searchWhileAdding();
         }
 
         $scope.deleteItem = function (item) {
@@ -223,6 +266,11 @@
         function newItemHandler(item) {
             $scope.allItems[item.itemId] = item
             lunrService.addItemToLunr(item)
+        }
+
+        function updateItemHandler(item) {
+            $scope.allItems[item.itemId] = item
+            lunrService.updateItemInLunr(item)
         }
 
 //        function compareItems(a,b) {
