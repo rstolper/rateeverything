@@ -20,6 +20,22 @@
                 });
             },
 
+            updateItem: function(authToken, authProvider, itemId, item, updateItemCallback)
+            {
+                var req = {
+                    method: 'PUT',
+                    url: '/app/api/v1/user/items/' + itemId,
+                    headers: {
+                        'AuthToken': authToken,
+                        'AuthProvider': authProvider
+                    },
+                    data: item
+                }
+                $http(req).then(updateItemCallback, function(response) {
+                    alert("item update failed :(");
+                });
+            },
+
             getAllItems: function (authToken, authProvider, itemsReceivedCallback)
             {
                 var req = {
@@ -161,6 +177,10 @@
             addItemToLunr : function (item) {
                 if (!lunrItemsIndex) createItemsIndex();
                 lunrItemsIndex.add(item);
+            },
+            updateItemInLunr : function (item) {
+                if (!lunrItemsIndex) createItemsIndex();
+                lunrItemsIndex.update(item);
             },
             removeItemFromLunr : function (item) {
                 if (!lunrItemsIndex) createItemsIndex();

@@ -38,6 +38,10 @@ body {
     padding: 0px 10px;
 }
 
+.item-list .item-actions {display:none}
+.item-list li:hover .item-actions {display:inline}
+.item-list .fa {font-size:1.07em}
+
 .item-name {
     font-weight: normal;
 }

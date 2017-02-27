@@ -60,14 +60,19 @@ public class ItemResource {
     @PUT
     public Response updateItem(ItemDTO updateItemDTO) {
         System.out.println("Updating item for userId: " + userId + ", itemId: " + itemId);
-        if (!itemService.existsItem(userId, itemId)) {
+        Item existingItem = itemService.getItem(userId, itemId);
+        if (existingItem == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("No item exists with id: " + itemId).build();
         }
         Rating itemRating = Rating.valueOfDisplayText(updateItemDTO.getRating());
         if (itemRating == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Invalid rating: " + updateItemDTO.getRating()).build();
         }
-        Item updatedItem = itemService.updateItem(new Item(itemId, userId, updateItemDTO.getName(), updateItemDTO.getCategory(), itemRating));
+        existingItem.setName(updateItemDTO.getName());
+        existingItem.setCategory(updateItemDTO.getCategory());
+        existingItem.setRating(itemRating);
+        existingItem.setNotes(updateItemDTO.getNotes());
+        Item updatedItem = itemService.updateItem(existingItem);
         ItemDTO updatedItemDTO = new ItemDTO(updatedItem);
         updatedItemDTO.setUrl(uriInfo.getAbsolutePath());
         return Response.ok().entity(updatedItemDTO).build();
