@@ -16,7 +16,7 @@ import java.net.URI;
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
     //public static final String BASE_URI = "http://localhost:8080/app/";
-    public static final String HOST = (System.getenv("HOST")!=null?System.getenv("HOST"):"localhost");
+    public static final String HOST = (System.getenv("HOST")!=null?System.getenv("HOST"):"0.0.0.0");
     public static final String PORT = (System.getenv("PORT")!=null?System.getenv("PORT"):"8080");
     public static final String BASE_URI = "http://"+HOST+":"+PORT+"/app/";
 
